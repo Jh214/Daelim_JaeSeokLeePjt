@@ -4,18 +4,26 @@ import jaeseok.jaeseoklee.dto.LoginDto;
 import jaeseok.jaeseoklee.dto.SignUpDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Table(name = "user")
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Builder
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long uid;
@@ -40,21 +48,46 @@ public class User {
     @Column(nullable = false)
     private int class_num;
 
-    public User(SignUpDto dto) {
-        this.user_id = dto.getUser_id();
-        this.user_pw = dto.getUser_pw();
-        this.user_name = dto.getUser_name();
-        this.user_num = dto.getUser_num();
-        this.user_date = dto.getUser_date();
-        this.user_nickname = dto.getUser_nickname();
-        this.user_join = LocalDateTime.now();
-        this.user_email = dto.getUser_email();
-        this.school_num = dto.getSchool_num();
-        this.class_num = dto.getClass_num();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<String> roles;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role))
+                .collect(Collectors.toList());
     }
 
-    public User(LoginDto dto){
-        this.user_id = dto.getUser_id();
-        this.user_pw = dto.getUser_pw();
+    @Override
+    public String getPassword() {
+        return user_pw;
+    }
+
+    @Override
+    public String getUsername() {
+        return user_id;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
