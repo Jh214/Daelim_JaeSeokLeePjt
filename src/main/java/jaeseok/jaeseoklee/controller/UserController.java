@@ -34,13 +34,13 @@ public class UserController {
             return result;
         }
 
-        @PutMapping("/update")
+        @PutMapping("/update/{uid}")
     public ResponseDto<?> update(@PathVariable Long uid, @RequestBody UpdateDto updateDto){
             ResponseDto<?> result = userService.update(uid, updateDto);
             return result;
         }
 
-        @PostMapping("/delete")
+        @PostMapping("/delete/{uid}")
     public ResponseDto<?> delete(@PathVariable Long uid){
             ResponseDto<?> result = userService.delete(uid);
             return result;

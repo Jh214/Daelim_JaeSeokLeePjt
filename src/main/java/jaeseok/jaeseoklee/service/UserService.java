@@ -35,10 +35,10 @@ public class UserService {
         String password = dto.getUser_pw();
         String confirmPassword = dto.getUser_conPw();
 
-        // id 중복 확인
-        if (userRepository.existsByUserId(user_id)) {
-            return ResponseDto.setFailed("중복된 아이디입니다.");
-        }
+//        // id 중복 확인
+//        if (userRepository.existsByUserId(user_id)) {
+//            return ResponseDto.setFailed("중복된 아이디입니다.");
+//        }
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
