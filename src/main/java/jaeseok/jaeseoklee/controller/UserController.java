@@ -1,16 +1,13 @@
 package jaeseok.jaeseoklee.controller;
 
-import jaeseok.jaeseoklee.dto.LoginDto;
-import jaeseok.jaeseoklee.dto.ResponseDto;
-import jaeseok.jaeseoklee.dto.SignUpDto;
-import jaeseok.jaeseoklee.dto.UpdateDto;
-import jaeseok.jaeseoklee.entity.User;
+import jaeseok.jaeseoklee.dto.*;
+import jaeseok.jaeseoklee.dto.user.LoginDto;
+import jaeseok.jaeseoklee.dto.user.SignUpDto;
+import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -34,15 +31,21 @@ public class UserController {
             return result;
         }
 
-        @PutMapping("/update/{uid}")
-    public ResponseDto<?> update(@PathVariable Long uid, @RequestBody UpdateDto updateDto){
-            ResponseDto<?> result = userService.update(uid, updateDto);
+        @PutMapping("/update")
+    public ResponseDto<?> update(@RequestParam(name = "userId") String userId, @RequestBody UpdateDto updateDto){
+            ResponseDto<?> result = userService.update(userId, updateDto);
             return result;
         }
 
-        @PostMapping("/delete/{uid}")
-    public ResponseDto<?> delete(@PathVariable Long uid){
-            ResponseDto<?> result = userService.delete(uid);
+        @PostMapping("/delete")
+    public ResponseDto<?> delete(@RequestParam(name = "userId") String userId){
+            ResponseDto<?> result = userService.delete(userId);
+            return result;
+        }
+
+        @GetMapping("/detail")
+    public ResponseDto<?> userDetail(@RequestParam(name = "userId") String userId){
+            ResponseDto<?> result = userService.userDetail(userId);
             return result;
         }
 }

@@ -32,7 +32,7 @@ public class SecurityConfig{
 //                .authorizeHttpRequests(authz -> authz
 //                        .requestMatchers("/api/user/login").permitAll()
 //                        .anyRequest().authenticated()
-//                )
+//                ) <- 엔드포인트별로 인가 설정해주는 문장
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

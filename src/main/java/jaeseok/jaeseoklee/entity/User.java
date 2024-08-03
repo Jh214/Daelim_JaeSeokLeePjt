@@ -1,7 +1,6 @@
 package jaeseok.jaeseoklee.entity;
 
-import jaeseok.jaeseoklee.dto.LoginDto;
-import jaeseok.jaeseoklee.dto.SignUpDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,25 +26,25 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long uid;
     @Column(unique = true, nullable = false, length = 50, name = "user_id")
-    private String user_id;
-    @Column(nullable = false)
-    private String user_pw;
-    @Column(nullable = false)
-    private String user_name;
-    @Column(unique = true, nullable = false)
-    private String user_num;
-    @Column(nullable = false)
-    private String user_date;
-    @Column(unique = true, nullable = false, length = 50)
-    private String user_nickname;
-    @Column(nullable = false)
-    private LocalDateTime user_join;
-    @Column(unique = true, nullable = false, length = 50)
-    private String user_email;
-    @Column(nullable = false)
-    private int school_num;
-    @Column(nullable = false)
-    private int class_num;
+    private String userId;
+    @Column(nullable = false, name = "user_pw")
+    private String userPw;
+    @Column(nullable = false, name = "user_name")
+    private String userName;
+    @Column(unique = true, nullable = false, name = "user_num")
+    private String userNum;
+    @Column(nullable = false, name = "user_date")
+    private String userDate;
+    @Column(unique = true, nullable = false, length = 50, name = "user_nickname")
+    private String userNickname;
+    @Column(nullable = false, name = "user_join")
+    private LocalDateTime userJoin;
+    @Column(unique = true, nullable = false, length = 50, name = "user_email")
+    private String userEmail;
+    @Column(nullable = false, name = "school_num")
+    private int schoolNum;
+    @Column(nullable = false, name = "class_num")
+    private int classNum;
 
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -63,12 +61,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user_pw;
+        return userPw;
     }
 
     @Override
     public String getUsername() {
-        return user_id;
+        return userId;
     }
 
     @Override
@@ -90,4 +88,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("user")
+    private List<Student> student;
 }

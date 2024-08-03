@@ -1,14 +1,14 @@
 package jaeseok.jaeseoklee.service;
 
 import jaeseok.jaeseoklee.dto.*;
+import jaeseok.jaeseoklee.dto.user.LoginDto;
+import jaeseok.jaeseoklee.dto.user.SignUpDto;
+import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 @Transactional
@@ -31,14 +29,10 @@ public class UserService {
 
 
     public ResponseDto<?> signUp(SignUpDto dto) {
-        String user_id = dto.getUser_id();
-        String password = dto.getUser_pw();
-        String confirmPassword = dto.getUser_conPw();
+        String userId = dto.getUserId();
+        String password = dto.getUserPw();
+        String confirmPassword = dto.getUserConPw();
 
-//        // id 중복 확인
-//        if (userRepository.existsByUserId(user_id)) {
-//            return ResponseDto.setFailed("중복된 아이디입니다.");
-//        }
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
@@ -50,16 +44,16 @@ public class UserService {
 
         // UserEntity 생성
         User user = User.builder()
-                .user_id(user_id)
-                .user_pw(hashedPassword) // 해시된 비밀번호
-                .user_name(dto.getUser_name())
-                .user_num(dto.getUser_num())
-                .user_date(dto.getUser_date())
-                .user_nickname(dto.getUser_nickname())
-                .user_join(LocalDateTime.now()) // 현재 시간으로 설정
-                .user_email(dto.getUser_email())
-                .school_num(dto.getSchool_num())
-                .class_num(dto.getClass_num())
+                .userId(userId)
+                .userPw(hashedPassword) // 해시된 비밀번호
+                .userName(dto.getUserName())
+                .userNum(dto.getUserNum())
+                .userDate(dto.getUserDate())
+                .userNickname(dto.getUserNickname())
+                .userJoin(LocalDateTime.now()) // 현재 시간으로 설정
+                .userEmail(dto.getUserEmail())
+                .schoolNum(dto.getSchoolNum())
+                .classNum(dto.getClassNum())
                 .roles(List.of("ROLE_USER")) // 기본 역할 설정, 필요에 따라 수정 가능
                 .build();
 
@@ -74,12 +68,12 @@ public class UserService {
     }
 
     public ResponseDto<?> login(LoginDto dto) {
-        String userId = dto.getUser_id();
-        String password = dto.getUser_pw();
+        String userId = dto.getUserId();
+        String password = dto.getUserPw();
 
         Optional<User> findUser = userRepository.findByUserId(userId);
 
-        if (findUser.isPresent() && bCryptPasswordEncoder.matches(password, findUser.get().getUser_pw())) {
+        if (findUser.isPresent() && bCryptPasswordEncoder.matches(password, findUser.get().getUserPw())) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userId,
                     null,
@@ -96,8 +90,8 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
-    public ResponseDto<?> update(Long uid, UpdateDto dto) {
-        Optional<User> userOptional = userRepository.findById(uid);
+    public ResponseDto<?> update(String userId, UpdateDto dto) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
@@ -105,30 +99,30 @@ public class UserService {
         User user = userOptional.get();
 
         // 비밀번호 확인
-        if (dto.getUser_pw() != null && !bCryptPasswordEncoder.matches(dto.getUser_pw(), user.getPassword())) {
+        if (dto.getUserPw() != null && !bCryptPasswordEncoder.matches(dto.getUserPw(), user.getPassword())) {
             return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
         }
 
         // 새로운 비밀번호 확인
-        if (dto.getUser_pw() != null && !dto.getUser_pw().equals(dto.getUser_conPw())) {
+        if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
 
         // 비밀번호 해싱
-        String hashedPassword = dto.getUser_pw() != null ? bCryptPasswordEncoder.encode(dto.getUser_pw()) : user.getPassword();
+        String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
 
         // UserEntity 수정
         User updatedUser = User.builder()
                 .uid(user.getUid()) // 기존 uid를 유지
-                .user_id(user.getUser_id()) // 기존 user_id를 유지
-                .user_pw(hashedPassword)
-                .user_name(dto.getUser_name() != null ? dto.getUser_name() : user.getUser_name())
-                .user_num(dto.getUser_num() != null ? dto.getUser_num() : user.getUser_num())
-                .user_nickname(dto.getUser_nickname() != null ? dto.getUser_nickname() : user.getUser_nickname())
-                .user_join(user.getUser_join()) // 기존 가입일을 유지
-                .user_email(dto.getUser_email() != null ? dto.getUser_email() : user.getUser_email())
-                .school_num(dto.getSchool_num() != null ? dto.getSchool_num() : user.getSchool_num())
-                .class_num(dto.getClass_num() != null ? dto.getClass_num() : user.getClass_num())
+                .userId(user.getUserId()) // 기존 user_id를 유지
+                .userPw(hashedPassword)
+                .userName(dto.getUserName() != null ? dto.getUserName() : user.getUsername())
+                .userNum(dto.getUserNum() != null ? dto.getUserNum() : user.getUserNum())
+                .userNickname(dto.getUserNickname() != null ? dto.getUserNickname() : user.getUserNickname())
+                .userJoin(user.getUserJoin()) // 기존 가입일을 유지
+                .userEmail(dto.getUserEmail() != null ? dto.getUserEmail() : user.getUserEmail())
+                .schoolNum(dto.getSchoolNum() != null ? dto.getSchoolNum() : user.getSchoolNum())
+                .classNum(dto.getClass_Num() != null ? dto.getClass_Num() : user.getClassNum())
                 .roles(user.getRoles()) // 기존 역할을 유지 (필요에 따라 업데이트 가능)
                 .build();
 
@@ -142,18 +136,26 @@ public class UserService {
         return ResponseDto.setSuccess("회원 정보가 성공적으로 수정되었습니다.");
     }
 
-    public ResponseDto<?> delete(Long uid) {
-        Optional<User> optionalUser = userRepository.findById(uid);
+    public ResponseDto<?> delete(String userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (!optionalUser.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
         try {
             // DB에서 사용자 삭제
-            userRepository.deleteById(uid);
+            userRepository.deleteByUserId(userId);
         } catch (Exception e) {
             return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
         }
 
         return ResponseDto.setSuccess("회원이 성공적으로 삭제되었습니다.");
+    }
+
+    public ResponseDto<?> userDetail(String userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
+        }
+        return ResponseDto.setSuccess("회원 정보를 성공적으로 불러왔습니다.");
     }
 }

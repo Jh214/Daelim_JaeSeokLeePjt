@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.dto;
+package jaeseok.jaeseoklee.dto.user;
 
 import lombok.*;
 
@@ -7,6 +7,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 public class LoginDto {
-    private String user_id;
-    private String user_pw;
+    private String userId;
+    private String userPw;
 }
