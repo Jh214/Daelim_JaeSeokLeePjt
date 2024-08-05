@@ -10,12 +10,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT s FROM Student s WHERE s.user.userId = :userId")
     Page<Student> findByUserId(@Param("userId") String userId, Pageable pageable);
 
-    @Query("SELECT s FROM Student s WHERE s.user = :user")
-    List<Student> findByUser(@Param("user") User user);
 }

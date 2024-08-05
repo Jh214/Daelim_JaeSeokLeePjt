@@ -31,14 +31,14 @@ public class UserController {
             return result;
         }
 
-        @PutMapping("/update")
-    public ResponseDto<?> update(@RequestParam(name = "userId") String userId, @RequestBody UpdateDto updateDto){
+        @PutMapping("/update/{userId}")
+    public ResponseDto<?> update(@PathVariable(name = "userId") String userId, @RequestBody UpdateDto updateDto){
             ResponseDto<?> result = userService.update(userId, updateDto);
             return result;
         }
 
-        @PostMapping("/delete")
-    public ResponseDto<?> delete(@RequestParam(name = "userId") String userId){
+        @DeleteMapping("/delete/{userId}")
+    public ResponseDto<?> delete(@PathVariable(name = "userId") String userId){
             ResponseDto<?> result = userService.delete(userId);
             return result;
         }

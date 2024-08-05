@@ -89,7 +89,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnoreProperties("user")
     private List<Student> student;
 }

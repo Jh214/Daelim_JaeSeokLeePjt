@@ -54,7 +54,7 @@ public class UserService {
                 .userEmail(dto.getUserEmail())
                 .schoolNum(dto.getSchoolNum())
                 .classNum(dto.getClassNum())
-                .roles(List.of("ROLE_USER")) // 기본 역할 설정, 필요에 따라 수정 가능
+                .roles(List.of("USER")) // 기본 역할 설정, 필요에 따라 수정 가능
                 .build();
 
         try {
@@ -141,9 +141,15 @@ public class UserService {
         if (!optionalUser.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
+
+        User user = optionalUser.get();
+
         try {
+            user.getStudent().forEach(student -> student.setUser(null));
+            user.getStudent().clear();
             // DB에서 사용자 삭제
             userRepository.deleteByUserId(userId);
+            userRepository.flush();
         } catch (Exception e) {
             return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
         }

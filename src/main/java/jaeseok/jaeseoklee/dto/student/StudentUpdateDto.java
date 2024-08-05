@@ -12,4 +12,5 @@ public class StudentUpdateDto {
     private String studentNum;
     private String studentAge;
     private Long uid;
+    private Long studentId;
 }

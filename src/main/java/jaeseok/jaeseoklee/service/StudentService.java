@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,33 +75,61 @@ public class StudentService {
         );
     }
 
-//    public ResponseDto<?> updateStudent(StudentUpdateDto updateDto) {
-//        // 사용자 ID로 User 객체 조회
-//        User user = userRepository.findById(updateDto.getUid())
-//                .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."));
-//
-//        // User로 Student 객체 조회
-//        Student student = studentRepository.findByUser(user)
-//                .orElseThrow(() -> new RuntimeException("학생 정보를 찾을 수 없습니다."));
-//
-//        // 업데이트할 필드만 설정
-//        if (updateDto.getStudentName() != null) {
-//            student.setStudentName(updateDto.getStudentName());
-//        }
-//        if (updateDto.getStudentNum() != null) {
-//            student.setStudentNum(updateDto.getStudentNum());
-//        }
-//        if (updateDto.getStudentAge() != null) {
-//            student.setStudentAge(updateDto.getStudentAge());
-//        }
-//
-//        // 업데이트된 Student 객체 저장
-//        try {
-//            studentRepository.save(student);
-//            return ResponseDto.setSuccess("학생 정보가 수정되었습니다.");
-//        } catch (Exception e) {
-//            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
-//        }
-//    }
+    public ResponseDto<?> updateStudent(StudentUpdateDto updateDto) {
+        // 사용자 ID로 User 객체 조회
+        User user = userRepository.findById(updateDto.getUid())
+                .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."));
+
+        // 학생 ID로 Student 객체 조회
+        Student student = studentRepository.findById(updateDto.getStudentId())
+                .orElseThrow(() -> new RuntimeException("학생 정보를 찾을 수 없습니다."));
+
+        // 학생이 해당 유저에 속하는지 확인
+        if (!student.getUser().equals(user)) {
+            return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
+        }
+
+        // 업데이트할 필드만 설정
+        if (updateDto.getStudentName() != null) {
+            student.setStudentName(updateDto.getStudentName());
+        }
+        if (updateDto.getStudentNum() != null) {
+            student.setStudentNum(updateDto.getStudentNum());
+        }
+        if (updateDto.getStudentAge() != null) {
+            student.setStudentAge(updateDto.getStudentAge());
+        }
+
+        // 업데이트된 Student 객체 저장
+        try {
+            studentRepository.save(student);
+            return ResponseDto.setSuccess("학생 정보가 수정되었습니다.");
+        } catch (Exception e) {
+            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
+        }
+    }
+
+    public ResponseDto<?> deleteStudent(Long studentId, String currentUserId) {
+        Optional<Student> optionalStudent = studentRepository.findById(studentId);
+
+        if (!optionalStudent.isPresent()) {
+            return ResponseDto.setFailed("해당 학생을 찾을 수 없습니다.");
+        }
+
+        Student student = optionalStudent.get();
+
+        // 학생의 소속 사용자 ID와 현재 인증된 사용자 ID가 일치하는지 확인
+        if (!student.getUser().getUserId().equals(currentUserId)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
+
+        try {
+            studentRepository.deleteById(studentId);
+        } catch (Exception e) {
+            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
+        }
+
+        return ResponseDto.setSuccess("학생이 성공적으로 삭제되었습니다.");
+    }
 
 }
