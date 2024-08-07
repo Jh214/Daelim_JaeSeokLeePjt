@@ -29,14 +29,9 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers("/api/user/login").permitAll()
-//                        .anyRequest().authenticated()
-//                ) <- 엔드포인트별로 인가 설정해주는 문장
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 로그인 엔드포인트는 인증 없이 접근 가능
-                        .requestMatchers("/api/user/**").hasRole("USER") // ROLE_USER가 있어야 접근 가능
-                        .requestMatchers("/api/student/**").hasRole("USER") // ROLE_USER가 있어야 접근 가능
+                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") // USER가 있어야 접근 가능
                         .anyRequest().permitAll() // 나머지 모든 요청은 접근 허용
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
