@@ -5,6 +5,7 @@ import jaeseok.jaeseoklee.dto.user.LoginDto;
 import jaeseok.jaeseoklee.dto.user.SignUpDto;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.entity.User;
+import jaeseok.jaeseoklee.repository.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final StudentRepository studentRepository;
 
 
     public ResponseDto<?> signUp(SignUpDto dto) {
@@ -52,7 +54,7 @@ public class UserService {
                 .userNickname(dto.getUserNickname())
                 .userJoin(LocalDateTime.now()) // 현재 시간으로 설정
                 .userEmail(dto.getUserEmail())
-                .schoolNum(dto.getSchoolNum())
+                .schoolName(dto.getSchoolName())
                 .classNum(dto.getClassNum())
                 .roles(List.of("USER")) // 기본 역할 설정, 필요에 따라 수정 가능
                 .build();
@@ -121,7 +123,7 @@ public class UserService {
                 .userNickname(dto.getUserNickname() != null ? dto.getUserNickname() : user.getUserNickname())
                 .userJoin(user.getUserJoin()) // 기존 가입일을 유지
                 .userEmail(dto.getUserEmail() != null ? dto.getUserEmail() : user.getUserEmail())
-                .schoolNum(dto.getSchoolNum() != null ? dto.getSchoolNum() : user.getSchoolNum())
+                .schoolName(dto.getSchoolName() != null ? dto.getSchoolName() : user.getSchoolName())
                 .classNum(dto.getClass_Num() != null ? dto.getClass_Num() : user.getClassNum())
                 .roles(user.getRoles()) // 기존 역할을 유지 (필요에 따라 업데이트 가능)
                 .build();
@@ -138,23 +140,17 @@ public class UserService {
 
     public ResponseDto<?> delete(String userId) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
-
         User user = optionalUser.get();
-
         try {
-            user.getStudent().forEach(student -> student.setUser(null));
-            user.getStudent().clear();
-            // DB에서 사용자 삭제
-            userRepository.deleteByUserId(userId);
-            userRepository.flush();
+            studentRepository.deleteAll(user.getStudent());
+            userRepository.delete(user);
+            return ResponseDto.setSuccess("회원이 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
-            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
+            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다: " + e.getMessage());
         }
-
-        return ResponseDto.setSuccess("회원이 성공적으로 삭제되었습니다.");
     }
 
     public ResponseDto<?> userDetail(String userId) {

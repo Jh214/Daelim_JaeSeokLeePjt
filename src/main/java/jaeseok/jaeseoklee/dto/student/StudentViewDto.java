@@ -11,6 +11,6 @@ public class StudentViewDto {
     private String studentNum;
     private String studentGender;
     private String studentAge;
-    private int schoolNum;
+    private String schoolName;
     private int classNum;
 }

@@ -21,6 +21,6 @@ public class SignUpDto {
     private String userNickname;
     private LocalDateTime userJoin;
     private String userEmail;
-    private int schoolNum;
+    private String schoolName;
     private int classNum;
 }

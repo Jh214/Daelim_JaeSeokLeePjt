@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,12 +40,13 @@ public class User implements UserDetails {
     private String userDate;
     @Column(unique = true, nullable = false, length = 50, name = "user_nickname")
     private String userNickname;
+    @CreationTimestamp
     @Column(nullable = false, name = "user_join")
     private LocalDateTime userJoin;
     @Column(unique = true, nullable = false, length = 50, name = "user_email")
     private String userEmail;
-    @Column(nullable = false, name = "school_num")
-    private int schoolNum;
+    @Column(nullable = false, name = "school_name")
+    private String schoolName;
     @Column(nullable = false, name = "class_num")
     private int classNum;
 
@@ -89,7 +93,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.REMOVE, orphanRemoval = true)
-    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
     private List<Student> student;
 }

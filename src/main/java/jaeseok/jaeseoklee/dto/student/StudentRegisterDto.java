@@ -10,7 +10,7 @@ public class StudentRegisterDto {
     private String studentNum;
     private String studentAge;
     private String studentGender;
-    private int schoolNum;
+    private String schoolName;
     private int classNum;
     private Long uid;
 }

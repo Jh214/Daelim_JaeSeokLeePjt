@@ -29,11 +29,11 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 로그인 엔드포인트는 인증 없이 접근 가능
-                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") // USER가 있어야 접근 가능
-                        .anyRequest().permitAll() // 나머지 모든 요청은 접근 허용
-                )
+//                .authorizeHttpRequests(authz -> authz
+//                        .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 로그인 엔드포인트는 인증 없이 접근 가능
+//                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") // USER가 있어야 접근 가능
+//                        .anyRequest().permitAll() // 나머지 모든 요청은 접근 허용
+//                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -3,6 +3,10 @@ package jaeseok.jaeseoklee.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Table(name = "Student")
 @Entity
@@ -23,11 +27,10 @@ public class Student {
     private String studentGender;
     @Column(nullable = false, name = "studentAge")
     private String studentAge;
-    private int schoolNum;
+    private String schoolName;
     private int classNum;
 
-    @ManyToOne
-    @JoinColumn(name = "uid", nullable = false)
-    @JsonIgnoreProperties("students")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "uid")
     private User user;
 }

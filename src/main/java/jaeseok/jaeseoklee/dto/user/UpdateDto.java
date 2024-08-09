@@ -14,6 +14,6 @@ public class UpdateDto {
     private String userNum;
     private String userNickname;
     private String userEmail;
-    private Integer schoolNum;
+    private String schoolName;
     private Integer class_Num;
 }

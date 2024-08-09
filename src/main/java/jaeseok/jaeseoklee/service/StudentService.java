@@ -40,7 +40,7 @@ public class StudentService {
                 .studentNum(registerDto.getStudentNum())
                 .studentGender(registerDto.getStudentGender())
                 .studentAge(registerDto.getStudentAge())
-                .schoolNum(registerDto.getSchoolNum())
+                .schoolName(registerDto.getSchoolName())
                 .classNum(registerDto.getClassNum())
                 .user(user) // 다대일 연관관계 설정
                 .build();
@@ -70,7 +70,7 @@ public class StudentService {
                 student.getStudentNum(),
                 student.getStudentGender(),
                 student.getStudentAge(),
-                student.getSchoolNum(),
+                student.getSchoolName(),
                 student.getClassNum()
         );
     }
@@ -109,20 +109,20 @@ public class StudentService {
         }
     }
 
-    public ResponseDto<?> deleteStudent(Long studentId, String currentUserId) {
+    public ResponseDto<?> deleteStudent(Long studentId/*, String currentUserId*/) {
         Optional<Student> optionalStudent = studentRepository.findById(studentId);
 
         if (!optionalStudent.isPresent()) {
             return ResponseDto.setFailed("해당 학생을 찾을 수 없습니다.");
         }
 
-        Student student = optionalStudent.get();
+//        Student student = optionalStudent.get();
 
         // 학생의 소속 사용자 ID와 현재 인증된 사용자 ID가 일치하는지 확인
-        if (!student.getUser().getUserId().equals(currentUserId)) {
+        /*if (!student.getUser().getUserId().equals(currentUserId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
-
+*/ /*현재 로그인된 사용자 + 해당 사용자에 해당하는지 확인*/
         try {
             studentRepository.deleteById(studentId);
         } catch (Exception e) {

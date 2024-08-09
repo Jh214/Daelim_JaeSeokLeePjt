@@ -43,12 +43,12 @@ public class StudentController {
 
     @DeleteMapping("/delete/{studentId}")
     public ResponseDto<?> studentDelete(@PathVariable(name = "studentId") Long studentId) {
-        // 현재 인증된 사용자 정보를 가져옴
+        /*// 현재 인증된 사용자 정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // 현재 사용자 정보를 가져옴
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
+        UserDetails currentUser = (UserDetails) authentication.getPrincipal();*/
 
-        ResponseDto<?> result = studentService.deleteStudent(studentId, currentUser.getUsername());
+        ResponseDto<?> result = studentService.deleteStudent(studentId/*, currentUser.getUsername()*/);
 
         return result;
     }
