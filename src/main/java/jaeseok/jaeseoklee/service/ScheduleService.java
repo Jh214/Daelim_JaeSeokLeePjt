@@ -9,6 +9,7 @@ import jaeseok.jaeseoklee.entity.Student;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

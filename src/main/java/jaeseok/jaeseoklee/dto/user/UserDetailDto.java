@@ -5,15 +5,19 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateDto {
-    private String userPw;
-    private String userConPw;
+@AllArgsConstructor
+@Getter
+public class UserDetailDto {
+    private String userId;
     private String userName;
     private String userNum;
+    private String userDate;
+    private LocalDateTime userJoin;
+    private String userEmail;
     private String schoolName;
-    private Integer classNum;
+    private int classNum;
 }

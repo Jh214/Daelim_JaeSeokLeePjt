@@ -4,6 +4,7 @@ import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.LoginDto;
 import jaeseok.jaeseoklee.dto.user.SignUpDto;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
+import jaeseok.jaeseoklee.dto.user.UserDetailDto;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.StudentRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +35,7 @@ public class UserService {
     private final ScheduleRepository scheduleRepository;
 
 
+    // ResponseDto를 반환하는 signUp(회원가입) 메서드
     public ResponseDto<?> signUp(SignUpDto dto) {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
@@ -62,7 +65,7 @@ public class UserService {
                 .build();
 
         try {
-            // DB에 사용자 저장
+            // db에 사용자 저장
             userRepository.save(user);
         } catch (Exception e) {
             return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
@@ -75,22 +78,25 @@ public class UserService {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
 
+//        UserId 조회
         Optional<User> findUser = userRepository.findByUserId(userId);
 
         if (findUser.isPresent() && bCryptPasswordEncoder.matches(password, findUser.get().getUserPw())) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
+//            로그인 성공
+            Authentication authentication = new UsernamePasswordAuthenticationToken( // Authentication 객체 생성
                     userId,
                     null,
-                    findUser.get().getAuthorities());
-            JwtTokenDto jwtTokenDto = jwtTokenProvider.generateToken(authentication);
-            return ResponseDto.setSuccessData("로그인 성공", jwtTokenDto);
+                    findUser.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
+            JwtTokenDto jwtTokenDto = jwtTokenProvider.generateToken(authentication); // JWT 토큰 생성
+            return ResponseDto.setSuccessData("로그인 성공", jwtTokenDto); // JSON형태로 성공메세지 + JWT 토큰 반환
         } else {
+//            로그인 실패
             return ResponseDto.setFailed("아이디 또는 비밀번호를 확인해주세요.");
         }
     }
 
     public ResponseDto<?> logout() {
-        // 리액트 클라이언트측에서 removeItem으로 토큰 제거 해주세용
+        // 클라이언트측에서 removeItem으로 토큰 제거 해주세용
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
@@ -100,12 +106,13 @@ public class UserService {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
 
+//        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성
         User user = userOptional.get();
 
         // 비밀번호 확인
-        if (dto.getUserPw() != null && !bCryptPasswordEncoder.matches(dto.getUserPw(), user.getPassword())) {
-            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
-        }
+//        if (dto.getUserPw() != null && !bCryptPasswordEncoder.matches(dto.getUserPw(), user.getPassword())) {
+//            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
+//        }
 
         // 새로운 비밀번호 확인
         if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
@@ -116,22 +123,11 @@ public class UserService {
         String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
 
         // UserEntity 수정
-        User updatedUser = User.builder()
-                .uid(user.getUid()) // 기존 uid를 유지
-                .userId(user.getUserId()) // 기존 user_id를 유지
-                .userPw(hashedPassword)
-                .userName(dto.getUserName() != null ? dto.getUserName() : user.getUsername())
-                .userNum(dto.getUserNum() != null ? dto.getUserNum() : user.getUserNum())
-                .userJoin(user.getUserJoin()) // 기존 가입일을 유지
-                .userEmail(dto.getUserEmail() != null ? dto.getUserEmail() : user.getUserEmail())
-                .schoolName(dto.getSchoolName() != null ? dto.getSchoolName() : user.getSchoolName())
-                .classNum(dto.getClass_Num() != null ? dto.getClass_Num() : user.getClassNum())
-                .roles(user.getRoles()) // 기존 역할을 유지 (필요에 따라 업데이트 가능)
-                .build();
+        user.update(dto, hashedPassword);
 
         try {
-            // DB에 사용자 저장
-            userRepository.save(updatedUser);
+            // db에 사용자 저장
+            userRepository.save(user);
         } catch (Exception e) {
             return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
         }
@@ -144,10 +140,14 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
+
         User user = optionalUser.get();
         try {
+//            현재 유저의 학생정보를 모두 삭제
             studentRepository.deleteAll(user.getStudent());
+//            현재 유저의 시간표를 모두 삭제
             scheduleRepository.deleteAll(user.getSchedule());
+//            유저 삭제
             userRepository.delete(user);
             return ResponseDto.setSuccess("회원이 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
@@ -160,6 +160,19 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
-        return ResponseDto.setSuccess("회원 정보를 성공적으로 불러왔습니다.");
+
+        List<UserDetailDto> userView = optionalUser.stream()
+                .map(user -> new UserDetailDto(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getUserNum(),
+                        user.getUserDate(),
+                        user.getUserJoin(),
+                        user.getUserEmail(),
+                        user.getSchoolName(),
+                        user.getClassNum()
+                ))
+                .collect(Collectors.toList());
+        return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);
     }
 }

@@ -1,14 +1,13 @@
 package jaeseok.jaeseoklee.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,6 +53,7 @@ public class User implements UserDetails {
     @Column(name = "role")
     private List<String> roles;
 
+//    getAuthorities() 오버라이딩으로 사용자 권한을 반환하는 메서드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -99,4 +99,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
+
+    public void update(UpdateDto updateDto, String hashedPassword){
+        this.userPw = hashedPassword;
+        this.userName = updateDto.getUserName();
+        this.userNum = updateDto.getUserNum();
+        this.schoolName = updateDto.getSchoolName();
+        this.classNum = updateDto.getClassNum();
+    }
 }
