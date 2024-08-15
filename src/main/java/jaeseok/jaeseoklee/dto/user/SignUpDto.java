@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class SignUpDto {
     private String userId;
@@ -18,7 +18,6 @@ public class SignUpDto {
     private String userName;
     private String userNum;
     private String userDate;
-    private String userNickname;
     private LocalDateTime userJoin;
     private String userEmail;
     private String schoolName;

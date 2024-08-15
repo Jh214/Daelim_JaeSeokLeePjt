@@ -3,12 +3,8 @@ package jaeseok.jaeseoklee.controller;
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
-import jaeseok.jaeseoklee.entity.Student;
 import jaeseok.jaeseoklee.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,12 +39,8 @@ public class StudentController {
 
     @DeleteMapping("/delete/{studentId}")
     public ResponseDto<?> studentDelete(@PathVariable(name = "studentId") Long studentId) {
-        /*// 현재 인증된 사용자 정보를 가져옴
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // 현재 사용자 정보를 가져옴
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();*/
 
-        ResponseDto<?> result = studentService.deleteStudent(studentId/*, currentUser.getUsername()*/);
+        ResponseDto<?> result = studentService.deleteStudent(studentId);
 
         return result;
     }

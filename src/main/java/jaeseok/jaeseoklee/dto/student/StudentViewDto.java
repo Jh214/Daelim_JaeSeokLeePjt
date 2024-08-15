@@ -4,8 +4,8 @@ import lombok.*;
 
 @Data
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class StudentViewDto {
     private String studentName;
     private String studentNum;

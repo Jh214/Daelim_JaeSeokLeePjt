@@ -38,8 +38,6 @@ public class User implements UserDetails {
     private String userNum;
     @Column(nullable = false, name = "user_date")
     private String userDate;
-    @Column(unique = true, nullable = false, length = 50, name = "user_nickname")
-    private String userNickname;
     @CreationTimestamp
     @Column(nullable = false, name = "user_join")
     private LocalDateTime userJoin;
@@ -95,4 +93,10 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
     private List<Student> student;
+
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    private List<Messages> messages;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedule;
 }

@@ -1,7 +1,10 @@
 package jaeseok.jaeseoklee.dto;
 
+import jaeseok.jaeseoklee.entity.Messages;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor(staticName = "set")

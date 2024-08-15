@@ -5,10 +5,12 @@ import jaeseok.jaeseoklee.dto.user.LoginDto;
 import jaeseok.jaeseoklee.dto.user.SignUpDto;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.entity.User;
+import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final StudentRepository studentRepository;
+    private final ScheduleRepository scheduleRepository;
 
 
     public ResponseDto<?> signUp(SignUpDto dto) {
@@ -51,7 +54,6 @@ public class UserService {
                 .userName(dto.getUserName())
                 .userNum(dto.getUserNum())
                 .userDate(dto.getUserDate())
-                .userNickname(dto.getUserNickname())
                 .userJoin(LocalDateTime.now()) // 현재 시간으로 설정
                 .userEmail(dto.getUserEmail())
                 .schoolName(dto.getSchoolName())
@@ -120,7 +122,6 @@ public class UserService {
                 .userPw(hashedPassword)
                 .userName(dto.getUserName() != null ? dto.getUserName() : user.getUsername())
                 .userNum(dto.getUserNum() != null ? dto.getUserNum() : user.getUserNum())
-                .userNickname(dto.getUserNickname() != null ? dto.getUserNickname() : user.getUserNickname())
                 .userJoin(user.getUserJoin()) // 기존 가입일을 유지
                 .userEmail(dto.getUserEmail() != null ? dto.getUserEmail() : user.getUserEmail())
                 .schoolName(dto.getSchoolName() != null ? dto.getSchoolName() : user.getSchoolName())
@@ -146,6 +147,7 @@ public class UserService {
         User user = optionalUser.get();
         try {
             studentRepository.deleteAll(user.getStudent());
+            scheduleRepository.deleteAll(user.getSchedule());
             userRepository.delete(user);
             return ResponseDto.setSuccess("회원이 성공적으로 삭제되었습니다.");
         } catch (Exception e) {

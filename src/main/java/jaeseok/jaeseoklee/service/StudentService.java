@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -115,14 +114,6 @@ public class StudentService {
         if (!optionalStudent.isPresent()) {
             return ResponseDto.setFailed("해당 학생을 찾을 수 없습니다.");
         }
-
-//        Student student = optionalStudent.get();
-
-        // 학생의 소속 사용자 ID와 현재 인증된 사용자 ID가 일치하는지 확인
-        /*if (!student.getUser().getUserId().equals(currentUserId)) {
-            return ResponseDto.setFailed("권한이 없습니다.");
-        }
-*/ /*현재 로그인된 사용자 + 해당 사용자에 해당하는지 확인*/
         try {
             studentRepository.deleteById(studentId);
         } catch (Exception e) {
