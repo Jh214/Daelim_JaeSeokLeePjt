@@ -40,7 +40,7 @@ public class StudentController {
     @DeleteMapping("/delete/{studentId}")
     public ResponseDto<?> studentDelete(@PathVariable(name = "studentId") Long studentId) {
 
-        ResponseDto<?> result = studentService.deleteStudent(studentId);
+        ResponseDto<?> result = studentService.deleteStudent(studentId/*, currentUser.getUsername()*/);
 
         return result;
     }

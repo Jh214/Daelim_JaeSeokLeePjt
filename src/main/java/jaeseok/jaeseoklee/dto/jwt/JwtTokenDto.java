@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.dto;
+package jaeseok.jaeseoklee.dto.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

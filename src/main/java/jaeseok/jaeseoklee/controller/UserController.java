@@ -1,6 +1,7 @@
 package jaeseok.jaeseoklee.controller;
 
 import jaeseok.jaeseoklee.dto.*;
+import jaeseok.jaeseoklee.dto.user.ConfirmPasswordDto;
 import jaeseok.jaeseoklee.dto.user.LoginDto;
 import jaeseok.jaeseoklee.dto.user.SignUpDto;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
@@ -31,9 +32,20 @@ public class UserController {
             return result;
         }
 
+    @PostMapping("/confirmPassword/{userId}")
+    public ResponseDto<?> confirmPassowrd(@PathVariable(name = "userId") String userId, @RequestBody ConfirmPasswordDto confirmPasswordDto){
+        ResponseDto<?> result = userService.confirmPw(userId, confirmPasswordDto);
+        return result;
+    }
+
         @PutMapping("/update/{userId}")
-    public ResponseDto<?> update(@PathVariable(name = "userId") String userId, @RequestBody UpdateDto updateDto){
-            ResponseDto<?> result = userService.update(userId, updateDto);
+    public ResponseDto<?> update(@PathVariable(name = "userId") String userId,
+                                 @RequestBody UpdateDto updateDto,
+                                 @RequestHeader("PasswordVerAuth") String token){
+            // Bearer 제거하고 실제 토큰 값 전달
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+            ResponseDto<?> result = userService.update(userId, updateDto, jwtToken);
             return result;
         }
 

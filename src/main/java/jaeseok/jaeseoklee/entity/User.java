@@ -2,6 +2,7 @@ package jaeseok.jaeseoklee.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
+import jaeseok.jaeseoklee.entity.schedule.TimeTable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -99,6 +100,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
+
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimeTable> timeTable;
 
     public void update(UpdateDto updateDto, String hashedPassword){
         this.userPw = hashedPassword;

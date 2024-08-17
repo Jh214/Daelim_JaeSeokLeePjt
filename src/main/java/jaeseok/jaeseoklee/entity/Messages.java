@@ -32,6 +32,6 @@ public class Messages {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "uid")
-    @JsonIgnore
+    @JsonIgnore // 응답 데이터에서 제외시키는 어노테이션
     private User user;
 }

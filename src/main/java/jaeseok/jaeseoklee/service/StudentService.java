@@ -114,6 +114,7 @@ public class StudentService {
         if (!optionalStudent.isPresent()) {
             return ResponseDto.setFailed("해당 학생을 찾을 수 없습니다.");
         }
+
         try {
             studentRepository.deleteById(studentId);
         } catch (Exception e) {

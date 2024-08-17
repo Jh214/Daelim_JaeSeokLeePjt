@@ -1,17 +1,15 @@
 package jaeseok.jaeseoklee.service;
 
 import jaeseok.jaeseoklee.dto.*;
-import jaeseok.jaeseoklee.dto.user.LoginDto;
-import jaeseok.jaeseoklee.dto.user.SignUpDto;
-import jaeseok.jaeseoklee.dto.user.UpdateDto;
-import jaeseok.jaeseoklee.dto.user.UserDetailDto;
+import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
+import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
+import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -100,19 +98,24 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
-    public ResponseDto<?> update(String userId, UpdateDto dto) {
+    public ResponseDto<?> update(String userId, UpdateDto dto, String token) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
+        // JWT 토큰 검증
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
+
+        // 비밀번호 인증이 성공한 사용자인지 확인
+        Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
+        if (!authentication.getName().equals(userId)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
 
 //        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성
         User user = userOptional.get();
-
-        // 비밀번호 확인
-//        if (dto.getUserPw() != null && !bCryptPasswordEncoder.matches(dto.getUserPw(), user.getPassword())) {
-//            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
-//        }
 
         // 새로운 비밀번호 확인
         if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
@@ -122,7 +125,7 @@ public class UserService {
         // 비밀번호 해싱
         String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
 
-        // UserEntity 수정
+        // 변경감지로 변경할 내용만 update 쿼리 적용
         user.update(dto, hashedPassword);
 
         try {
@@ -133,6 +136,26 @@ public class UserService {
         }
 
         return ResponseDto.setSuccess("회원 정보가 성공적으로 수정되었습니다.");
+    }
+
+    public ResponseDto<?> confirmPw(String userId, ConfirmPasswordDto confirmPasswordDto){
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+        if (!userOptional.isPresent()) {
+            return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
+        }
+
+        User user = userOptional.get();
+
+        // 비밀번호 확인
+        if (confirmPasswordDto.getUserPw() != null && !bCryptPasswordEncoder.matches(confirmPasswordDto.getUserPw(), user.getPassword())) {
+            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
+        }
+        Authentication authentication = new UsernamePasswordAuthenticationToken( // Authentication 객체 생성
+                user.getUserId(),
+                null,
+                userOptional.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
+        JWTConfirmPasswordTokenDto jwtConfirmPasswordTokenDto = jwtTokenProvider.generatePasswordVerificationToken(authentication);
+        return ResponseDto.setSuccessData("인증되었습니다", jwtConfirmPasswordTokenDto);
     }
 
     public ResponseDto<?> delete(String userId) {
