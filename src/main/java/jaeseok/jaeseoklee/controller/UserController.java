@@ -1,10 +1,7 @@
 package jaeseok.jaeseoklee.controller;
 
 import jaeseok.jaeseoklee.dto.*;
-import jaeseok.jaeseoklee.dto.user.ConfirmPasswordDto;
-import jaeseok.jaeseoklee.dto.user.LoginDto;
-import jaeseok.jaeseoklee.dto.user.SignUpDto;
-import jaeseok.jaeseoklee.dto.user.UpdateDto;
+import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

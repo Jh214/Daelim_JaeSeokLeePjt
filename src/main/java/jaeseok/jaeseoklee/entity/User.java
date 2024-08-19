@@ -2,6 +2,7 @@ package jaeseok.jaeseoklee.entity;
 
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.entity.schedule.Schedule;
+import jaeseok.jaeseoklee.entity.student.Student;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,11 +50,11 @@ public class User implements UserDetails {
 
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "uid"))
     @Column(name = "role")
     private List<String> roles;
 
-//    getAuthorities() 오버라이딩으로 사용자 권한을 반환하는 메서드
+//    getAuthorities() 사용자 권한을 반환하는 메서드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -100,10 +101,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
 
-    public void update(UpdateDto updateDto, String hashedPassword){
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SeatTable> seatTable;
+
+    public void update(UpdateDto updateDto, String hashedPassword, String creationUserNumDash){
         this.userPw = hashedPassword;
         this.userName = updateDto.getUserName();
-        this.userNum = updateDto.getUserNum();
+        this.userNum = creationUserNumDash;
         this.schoolName = updateDto.getSchoolName();
         this.classNum = updateDto.getClassNum();
     }

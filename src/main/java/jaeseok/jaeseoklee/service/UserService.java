@@ -38,6 +38,7 @@ public class UserService {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
         String confirmPassword = dto.getUserConPw();
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
@@ -52,7 +53,7 @@ public class UserService {
                 .userId(userId)
                 .userPw(hashedPassword) // 해시된 비밀번호
                 .userName(dto.getUserName())
-                .userNum(dto.getUserNum())
+                .userNum(creationUserNumDash) // 3번 째, 7번 째에 자동으로 - 생성
                 .userDate(dto.getUserDate())
                 .userJoin(LocalDateTime.now()) // 현재 시간으로 설정
                 .userEmail(dto.getUserEmail())
@@ -72,11 +73,10 @@ public class UserService {
     }
 
     public ResponseDto<?> checkId(String userId) {
-
         if (userRepository.existsByUserId(userId)) {
-            return ResponseDto.setFailed("이미 등록된 아이디 입니다.");
+            return ResponseDto.setFailed("이미 등록된 아이디입니다.");
         }
-        return ResponseDto.setSuccess("등록 가능한 아이디 입니다.");
+        return ResponseDto.setSuccess("등록 가능한 아이디입니다.");
     }
 
     public ResponseDto<?> checkEmail(String userEmail) {
@@ -87,7 +87,8 @@ public class UserService {
     }
 
     public ResponseDto<?> checkNum(String userNum) {
-        if (userRepository.existsByUserNum(userNum)) {
+        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+        if (userRepository.existsByUserNum(creationUserNumDash)) {
             return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
         }
         return ResponseDto.setSuccess("등록 가능한 핸드폰 번호 입니다.");
@@ -149,9 +150,10 @@ public class UserService {
 
         // 비밀번호 해싱
         String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         // 변경감지로 변경할 내용만 update 쿼리 적용
-        user.update(dto, hashedPassword);
+        user.update(dto, hashedPassword, creationUserNumDash);
 
         try {
             // db에 사용자 저장

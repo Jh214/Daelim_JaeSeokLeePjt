@@ -4,7 +4,6 @@ import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.schedule.ScheduleRegisterDto;
 import jaeseok.jaeseoklee.dto.schedule.ScheduleUpdateDto;
 import jaeseok.jaeseoklee.dto.schedule.ScheduleViewDto;
-import jaeseok.jaeseoklee.entity.Student;
 import jaeseok.jaeseoklee.entity.schedule.Schedule;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;

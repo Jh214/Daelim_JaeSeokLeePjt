@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.dto.student;
 
+import jaeseok.jaeseoklee.entity.student.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class StudentRegisterDto {
     private String studentAge;
     private String studentGender;
     private String schoolName;
+    private Grade studentGrade;
     private int classNum;
     private Long uid;
 }

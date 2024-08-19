@@ -1,12 +1,10 @@
-package jaeseok.jaeseoklee.entity;
+package jaeseok.jaeseoklee.entity.student;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
-import jaeseok.jaeseoklee.dto.user.UpdateDto;
+import jaeseok.jaeseoklee.entity.SeatTable;
+import jaeseok.jaeseoklee.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -31,7 +29,12 @@ public class Student {
     private String studentGender;
     @Column(nullable = false, name = "studentAge")
     private String studentAge;
+    @Column(nullable = false, name = "schoolName")
     private String schoolName;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "studentGrade")
+    private Grade studentGrade;
+    @Column(nullable = false, name = "classNum")
     private int classNum;
 
     @ManyToOne(fetch = LAZY)
@@ -39,7 +42,7 @@ public class Student {
     private User user;
 
     @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceTable> placeTables;
+    private List<SeatTable> seatTable;
 
     public void update(StudentUpdateDto updateDto){
         this.studentName = updateDto.getStudentName();

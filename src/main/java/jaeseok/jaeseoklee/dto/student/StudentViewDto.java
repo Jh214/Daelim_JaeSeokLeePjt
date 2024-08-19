@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.dto.student;
 
+import jaeseok.jaeseoklee.entity.student.Grade;
 import lombok.*;
 
 @Data
@@ -12,5 +13,6 @@ public class StudentViewDto {
     private String studentGender;
     private String studentAge;
     private String schoolName;
+    private Grade studentGrade;
     private int classNum;
 }

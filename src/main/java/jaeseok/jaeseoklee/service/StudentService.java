@@ -4,7 +4,7 @@ import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
 import jaeseok.jaeseoklee.dto.student.StudentViewDto;
-import jaeseok.jaeseoklee.entity.Student;
+import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
@@ -40,6 +40,7 @@ public class StudentService {
                 .studentGender(registerDto.getStudentGender())
                 .studentAge(registerDto.getStudentAge())
                 .schoolName(registerDto.getSchoolName())
+                .studentGrade(registerDto.getStudentGrade())
                 .classNum(registerDto.getClassNum())
                 .user(user) // 다대일 연관관계 설정
                 .build();
@@ -70,6 +71,7 @@ public class StudentService {
                 student.getStudentGender(),
                 student.getStudentAge(),
                 student.getSchoolName(),
+                student.getStudentGrade(),
                 student.getClassNum()
         );
     }
