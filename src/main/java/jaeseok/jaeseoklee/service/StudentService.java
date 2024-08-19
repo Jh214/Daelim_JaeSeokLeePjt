@@ -88,16 +88,8 @@ public class StudentService {
             return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
         }
 
-        // 업데이트할 필드만 설정
-        if (updateDto.getStudentName() != null) {
-            student.setStudentName(updateDto.getStudentName());
-        }
-        if (updateDto.getStudentNum() != null) {
-            student.setStudentNum(updateDto.getStudentNum());
-        }
-        if (updateDto.getStudentAge() != null) {
-            student.setStudentAge(updateDto.getStudentAge());
-        }
+//      JPA 변경감지로 수정
+        student.update(updateDto);
 
         // 업데이트된 Student 객체 저장
         try {
@@ -108,7 +100,7 @@ public class StudentService {
         }
     }
 
-    public ResponseDto<?> deleteStudent(Long studentId/*, String currentUserId*/) {
+    public ResponseDto<?> deleteStudent(Long studentId) {
         Optional<Student> optionalStudent = studentRepository.findById(studentId);
 
         if (!optionalStudent.isPresent()) {

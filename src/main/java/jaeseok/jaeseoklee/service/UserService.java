@@ -39,7 +39,6 @@ public class UserService {
         String password = dto.getUserPw();
         String confirmPassword = dto.getUserConPw();
 
-
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
@@ -70,6 +69,28 @@ public class UserService {
         }
 
         return ResponseDto.setSuccess("회원 생성에 성공했습니다.");
+    }
+
+    public ResponseDto<?> checkId(String userId) {
+
+        if (userRepository.existsByUserId(userId)) {
+            return ResponseDto.setFailed("이미 등록된 아이디 입니다.");
+        }
+        return ResponseDto.setSuccess("등록 가능한 아이디 입니다.");
+    }
+
+    public ResponseDto<?> checkEmail(String userEmail) {
+        if (userRepository.existsByUserEmail(userEmail)) {
+            return ResponseDto.setFailed("이미 등록된 이메일 입니다.");
+        }
+        return ResponseDto.setSuccess("등록 가능한 이메일 입니다.");
+    }
+
+    public ResponseDto<?> checkNum(String userNum) {
+        if (userRepository.existsByUserNum(userNum)) {
+            return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
+        }
+        return ResponseDto.setSuccess("등록 가능한 핸드폰 번호 입니다.");
     }
 
     public ResponseDto<?> login(LoginDto dto) {
@@ -112,6 +133,10 @@ public class UserService {
         Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
         if (!authentication.getName().equals(userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
+        }
+
+        if (userRepository.existsByUserNum(dto.getUserNum())){
+            return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
         }
 
 //        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성

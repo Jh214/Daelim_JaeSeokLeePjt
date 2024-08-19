@@ -1,9 +1,6 @@
 package jaeseok.jaeseoklee.repository;
 
-import jaeseok.jaeseoklee.entity.Schedule;
-import jaeseok.jaeseoklee.entity.Student;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import jaeseok.jaeseoklee.entity.schedule.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

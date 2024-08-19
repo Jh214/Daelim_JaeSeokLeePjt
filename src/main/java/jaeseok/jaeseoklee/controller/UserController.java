@@ -60,4 +60,25 @@ public class UserController {
             ResponseDto<?> result = userService.userDetail(userId);
             return result;
         }
+
+        @PostMapping("/checkId/{userId}")
+    public ResponseDto<?> CheckId(@PathVariable(name = "userId") String userId){
+            ResponseDto<?> result = userService.checkId(userId);
+
+            return result;
+        }
+
+    @PostMapping("/checkEmail/{userEmail}")
+    public ResponseDto<?> CheckEmail(@PathVariable(name = "userEmail") String userEmail){
+        ResponseDto<?> result = userService.checkEmail(userEmail);
+
+        return result;
+    }
+
+    @PostMapping("/checkNum/{CheckNum}")
+    public ResponseDto<?> CheckNum(@PathVariable(name = "CheckNum") String CheckNum){
+        ResponseDto<?> result = userService.checkNum(CheckNum);
+
+        return result;
+    }
 }
