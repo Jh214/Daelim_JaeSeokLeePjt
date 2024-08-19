@@ -32,13 +32,12 @@ public class UserService {
     private final StudentRepository studentRepository;
     private final ScheduleRepository scheduleRepository;
 
-
     // ResponseDto를 반환하는 signUp(회원가입) 메서드
     public ResponseDto<?> signUp(SignUpDto dto) {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
         String confirmPassword = dto.getUserConPw();
-        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
@@ -87,7 +86,7 @@ public class UserService {
     }
 
     public ResponseDto<?> checkNum(String userNum) {
-        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
             return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
         }
@@ -150,7 +149,7 @@ public class UserService {
 
         // 비밀번호 해싱
         String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
-        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
 
         // 변경감지로 변경할 내용만 update 쿼리 적용
         user.update(dto, hashedPassword, creationUserNumDash);
