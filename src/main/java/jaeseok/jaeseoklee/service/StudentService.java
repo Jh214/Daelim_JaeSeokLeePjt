@@ -1,12 +1,14 @@
 package jaeseok.jaeseoklee.service;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
+import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
 import jaeseok.jaeseoklee.dto.student.StudentViewDto;
+import jaeseok.jaeseoklee.entity.student.Grade;
 import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.User;
-import jaeseok.jaeseoklee.repository.StudentRepository;
+import jaeseok.jaeseoklee.repository.student.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -116,6 +118,37 @@ public class StudentService {
         }
 
         return ResponseDto.setSuccess("학생이 성공적으로 삭제되었습니다.");
+    }
+
+    public ResponseDto<?> filteringStudent(StudentFilterDto studentFilterDto) {
+        String userId = studentFilterDto.getUserId();
+        Grade studentGrade = studentFilterDto.getStudentGrade();
+        int classNum = studentFilterDto.getClassNum();
+
+        if (userId == null || userId.isEmpty()) {
+            return ResponseDto.setFailed("잘못된 요청입니다.");
+        }
+        if (studentGrade == null) {
+            return ResponseDto.setFailed("학년을 선택해주세요.");
+        }
+        if (classNum == 0) {
+            return ResponseDto.setFailed("반을 선택해주세요.");
+        }
+
+        int page = 0;
+        int size = 10;
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 필터링된 학생 목록 조회
+        Page<Student> studentsPage = studentRepository.findStudentsByUserIdAndGrade(studentFilterDto, pageable);
+
+        if (studentsPage.isEmpty()) {
+            return ResponseDto.setFailed("조건에 맞는 학생 정보가 없습니다.");
+        }
+
+        List<Student> students = studentsPage.getContent();
+
+        return ResponseDto.setSuccessData("학생 정보를 성공적으로 조회했습니다.", students);
     }
 
 }

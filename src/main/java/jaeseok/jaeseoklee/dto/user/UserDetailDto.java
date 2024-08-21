@@ -16,7 +16,6 @@ public class UserDetailDto {
     private String userName;
     private String userNum;
     private String userDate;
-    private LocalDateTime userJoin;
     private String userEmail;
     private String schoolName;
     private int classNum;

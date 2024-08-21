@@ -101,8 +101,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SeatTable> seatTable;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<SeatTable> seatTable;
 
     public void update(UpdateDto updateDto, String hashedPassword, String creationUserNumDash){
         this.userPw = hashedPassword;

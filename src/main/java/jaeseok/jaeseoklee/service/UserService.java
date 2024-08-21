@@ -6,7 +6,7 @@ import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
 import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
-import jaeseok.jaeseoklee.repository.StudentRepository;
+import jaeseok.jaeseoklee.repository.student.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
@@ -37,7 +37,7 @@ public class UserService {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
         String confirmPassword = dto.getUserConPw();
-        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
@@ -86,7 +86,7 @@ public class UserService {
     }
 
     public ResponseDto<?> checkNum(String userNum) {
-        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
+        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
             return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
         }
@@ -119,12 +119,12 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
-    public ResponseDto<?> update(String userId, UpdateDto dto, String token) {
+    public ResponseDto<?> update(String userId, UpdateDto dto/*, String token*/) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
-        // JWT 토큰 검증
+        /*// JWT 토큰 검증
         if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
@@ -133,7 +133,7 @@ public class UserService {
         Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
         if (!authentication.getName().equals(userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
-        }
+        }*/
 
         if (userRepository.existsByUserNum(dto.getUserNum())){
             return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
@@ -149,7 +149,7 @@ public class UserService {
 
         // 비밀번호 해싱
         String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
-        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})$", "$1-$2-");
+        String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         // 변경감지로 변경할 내용만 update 쿼리 적용
         user.update(dto, hashedPassword, creationUserNumDash);
@@ -216,7 +216,6 @@ public class UserService {
                         user.getUsername(),
                         user.getUserNum(),
                         user.getUserDate(),
-                        user.getUserJoin(),
                         user.getUserEmail(),
                         user.getSchoolName(),
                         user.getClassNum()

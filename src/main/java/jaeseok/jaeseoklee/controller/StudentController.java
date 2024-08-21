@@ -1,8 +1,10 @@
 package jaeseok.jaeseoklee.controller;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
+import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
+import jaeseok.jaeseoklee.entity.student.Grade;
 import jaeseok.jaeseoklee.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ public class StudentController {
     @GetMapping("/info")
     public ResponseDto<?> studentInfo(@RequestParam(name = "userId") String userId,
                                       @RequestParam(name = "page", defaultValue = "0") int page,
-                                      @RequestParam(name = "size", defaultValue = "10") int size){ // 한 page에 size 갯수 만큼의 학생 정보를 표기하기 위한 매개변수
+                                      @RequestParam(name = "size", defaultValue = "20") int size){ // 한 page에 size 갯수 만큼의 학생 정보를 표기하기 위한 매개변수
         ResponseDto<?> result = studentService.studentInfo(userId, page, size);
 
         return result;
@@ -44,4 +46,16 @@ public class StudentController {
 
         return result;
     }
+
+    @GetMapping("/info/filtering")
+    public ResponseDto<?> studentFiltering(@RequestParam(name = "userId") String userId,
+                                           @RequestParam(name = "studentGrade") Grade studentGrade,
+                                           @RequestParam(name = "classNum") int classNum) {
+        StudentFilterDto filterDto = new StudentFilterDto(userId, studentGrade, classNum);
+
+        ResponseDto<?> result = studentService.filteringStudent(filterDto);
+
+        return result;
+    }
+
 }

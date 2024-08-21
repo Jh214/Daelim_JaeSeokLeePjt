@@ -1,9 +1,9 @@
 package jaeseok.jaeseoklee.entity.schedule;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
 public enum TimeSlot {
     EightAM("08:00"),
@@ -23,4 +23,9 @@ public enum TimeSlot {
     TenPM("22:00");
 
     private final String description;
+
+    @JsonValue // description 반환값으로 JSON 변환돼서 사용자에게 반환
+    public String getDescription() {
+        return description;
+    }
 }

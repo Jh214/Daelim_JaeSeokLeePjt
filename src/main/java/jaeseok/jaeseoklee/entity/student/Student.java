@@ -1,7 +1,8 @@
 package jaeseok.jaeseoklee.entity.student;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
-import jaeseok.jaeseoklee.entity.SeatTable;
+//import jaeseok.jaeseoklee.entity.SeatTable;
 import jaeseok.jaeseoklee.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,10 +40,11 @@ public class Student {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "uid")
+    @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
-    private List<SeatTable> seatTable;
+//    @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
+//    private List<SeatTable> seatTable;
 
     public void update(StudentUpdateDto updateDto){
         this.studentName = updateDto.getStudentName();

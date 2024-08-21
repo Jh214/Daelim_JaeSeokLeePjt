@@ -35,14 +35,20 @@ public class UserController {
         return result;
     }
 
+    @GetMapping("/updateInfo")
+    public ResponseDto<?> updateInfo(@RequestParam(name = "userId") String userId){
+        ResponseDto<?> result = userService.userDetail(userId);
+
+        return result;
+    }
         @PutMapping("/update/{userId}")
     public ResponseDto<?> update(@PathVariable(name = "userId") String userId,
-                                 @RequestBody UpdateDto updateDto,
-                                 @RequestHeader("PasswordVerAuth") String token){
+                                 @RequestBody UpdateDto updateDto/*,
+                                 @RequestHeader("PasswordVerAuth") String token*/){
             // Bearer 제거하고 실제 토큰 값 전달
-            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            /*String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;*/
 
-            ResponseDto<?> result = userService.update(userId, updateDto, jwtToken);
+            ResponseDto<?> result = userService.update(userId, updateDto/*, jwtToken*/);
             return result;
         }
 
