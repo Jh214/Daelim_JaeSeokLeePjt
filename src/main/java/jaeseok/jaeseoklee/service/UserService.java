@@ -17,9 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static jaeseok.jaeseoklee.entity.QUser.user;
 
 @Service
 @Transactional
@@ -51,7 +55,7 @@ public class UserService {
         User user = User.builder()
                 .userId(userId)
                 .userPw(hashedPassword) // 해시된 비밀번호
-                .userName(dto.getUserName())
+                .userRealName(dto.getUserName())
                 .userNum(creationUserNumDash) // 3번 째, 7번 째에 자동으로 - 생성
                 .userDate(dto.getUserDate())
                 .userJoin(LocalDateTime.now()) // 현재 시간으로 설정
@@ -88,31 +92,41 @@ public class UserService {
     public ResponseDto<?> checkNum(String userNum) {
         String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
-            return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
+            return ResponseDto.setFailed("이미 등록된 전화번호 입니다.");
         }
-        return ResponseDto.setSuccess("등록 가능한 핸드폰 번호 입니다.");
+        return ResponseDto.setSuccess("등록 가능한 전화번호 입니다.");
     }
 
     public ResponseDto<?> login(LoginDto dto) {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
 
-//        UserId 조회
+        // UserId로 user 조회
         Optional<User> findUser = userRepository.findByUserId(userId);
 
         if (findUser.isPresent() && bCryptPasswordEncoder.matches(password, findUser.get().getUserPw())) {
-//            로그인 성공
-            Authentication authentication = new UsernamePasswordAuthenticationToken( // Authentication 객체 생성
+            // 로그인 성공
+            User user = findUser.get();
+            String userName = user.getUserRealName(); // 사용자 이름 가져오기
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userId,
                     null,
-                    findUser.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
+                    user.getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
             JwtTokenDto jwtTokenDto = jwtTokenProvider.generateToken(authentication); // JWT 토큰 생성
-            return ResponseDto.setSuccessData("로그인 성공", jwtTokenDto); // JSON형태로 성공메세지 + JWT 토큰 반환
+
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("userName", userName);
+            responseData.put("jwtToken", jwtTokenDto);
+
+            String successMessage = "로그인 성공!";
+            return ResponseDto.setSuccessData(successMessage, responseData);
         } else {
-//            로그인 실패
+            // 로그인 실패
             return ResponseDto.setFailed("아이디 또는 비밀번호를 확인해주세요.");
         }
     }
+
 
     public ResponseDto<?> logout() {
         // 클라이언트측에서 removeItem으로 토큰 제거 해주세용
@@ -213,7 +227,7 @@ public class UserService {
         List<UserDetailDto> userView = optionalUser.stream()
                 .map(user -> new UserDetailDto(
                         user.getUserId(),
-                        user.getUsername(),
+                        user.getUserRealName(),
                         user.getUserNum(),
                         user.getUserDate(),
                         user.getUserEmail(),

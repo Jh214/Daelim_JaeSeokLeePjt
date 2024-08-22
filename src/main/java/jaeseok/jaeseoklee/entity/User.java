@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @Column(nullable = false, name = "user_pw")
     private String userPw;
     @Column(nullable = false, name = "user_name")
-    private String userName;
+    private String userRealName;
     @Column(unique = true, nullable = false, name = "user_num")
     private String userNum;
     @Column(nullable = false, name = "user_date")
@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private int classNum;
 
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER) // User 를 검증하기 위한 role 을 즉시 로드하기 위해 ENGER 사용
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "uid"))
     @Column(name = "role")
     private List<String> roles;
@@ -106,7 +106,7 @@ public class User implements UserDetails {
 
     public void update(UpdateDto updateDto, String hashedPassword, String creationUserNumDash){
         this.userPw = hashedPassword;
-        this.userName = updateDto.getUserName();
+        this.userRealName = updateDto.getUserName();
         this.userNum = creationUserNumDash;
         this.schoolName = updateDto.getSchoolName();
         this.classNum = updateDto.getClassNum();

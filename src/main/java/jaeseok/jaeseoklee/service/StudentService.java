@@ -63,7 +63,7 @@ public class StudentService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
-        return ResponseDto.setSuccessData("학생 정보를 조회했습니다.", viewDto);
+        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", viewDto);
     }
 
     private StudentViewDto convertToDto(Student student) {
@@ -148,7 +148,7 @@ public class StudentService {
 
         List<Student> students = studentsPage.getContent();
 
-        return ResponseDto.setSuccessData("학생 정보를 성공적으로 조회했습니다.", students);
+        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", students);
     }
 
 }
