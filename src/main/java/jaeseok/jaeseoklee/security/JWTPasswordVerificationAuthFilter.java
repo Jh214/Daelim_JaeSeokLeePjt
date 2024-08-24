@@ -28,7 +28,7 @@ public class JWTPasswordVerificationAuthFilter extends OncePerRequestFilter {
         log.info("Token: " + token);
 
         // /api/user/update/ 엔드포인트에서만 검증
-        if (requestURI.startsWith("/api/user/update/")) {
+        if (requestURI.startsWith("/api/user/updatePassword/")) {
             if (token != null && jwtTokenProvider.validatePasswordVerificationToken(token)) {
                 Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

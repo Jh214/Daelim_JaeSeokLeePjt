@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static jaeseok.jaeseoklee.entity.QUser.user;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -133,40 +131,23 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
-    public ResponseDto<?> update(String userId, UpdateDto dto/*, String token*/) {
+    public ResponseDto<?> update(String userId, UpdateDto dto) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
-        /*// JWT 토큰 검증
-        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
-            return ResponseDto.setFailed("권한이 없습니다.");
-        }
 
-        // 비밀번호 인증이 성공한 사용자인지 확인
-        Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
-        if (!authentication.getName().equals(userId)) {
-            return ResponseDto.setFailed("권한이 없습니다.");
-        }*/
-
-        if (userRepository.existsByUserNum(dto.getUserNum())){
+        if (userRepository.existsByUserNum(dto.getUserNum())) {
             return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
         }
 
 //        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성
         User user = userOptional.get();
 
-        // 새로운 비밀번호 확인
-        if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
-            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 비밀번호 해싱
-        String hashedPassword = dto.getUserPw() != null ? bCryptPasswordEncoder.encode(dto.getUserPw()) : user.getPassword();
         String creationUserNumDash = dto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         // 변경감지로 변경할 내용만 update 쿼리 적용
-        user.update(dto, hashedPassword, creationUserNumDash);
+        user.update(dto, creationUserNumDash);
 
         try {
             // db에 사용자 저장
@@ -177,8 +158,45 @@ public class UserService {
 
         return ResponseDto.setSuccess("회원 정보가 성공적으로 수정되었습니다.");
     }
+    public ResponseDto<?> updatePassword(String userId, UpdatePasswrodDto dto, String token) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+        if (!userOptional.isPresent()) {
+            return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
+        }
+        // JWT 토큰 검증
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
 
-    public ResponseDto<?> confirmPw(String userId, ConfirmPasswordDto confirmPasswordDto){
+        // 비밀번호 인증이 성공한 사용자인지 확인
+        Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
+        if (!authentication.getName().equals(userId)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
+
+        // 새로운 비밀번호 확인
+        if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
+            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
+        }
+
+        User user = userOptional.get();
+
+        // 비밀번호 해싱
+        String hashedPassword = bCryptPasswordEncoder.encode(dto.getUserPw());
+
+        user.updatePassword(hashedPassword);
+
+        try {
+            // db에 사용자 저장
+            userRepository.save(user);
+        } catch (Exception e) {
+            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
+        }
+
+        return ResponseDto.setSuccess("비밀번호가 성공적으로 수정되었습니다.");
+    }
+
+    public ResponseDto<?> confirmPw(String userId, ConfirmPasswordDto confirmPasswordDto) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");

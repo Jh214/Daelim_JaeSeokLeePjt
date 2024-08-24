@@ -14,12 +14,11 @@ public class ResponseDto<D> {
     private String status;
     private D data;
 
-    public  static <D> ResponseDto<D> setSuccess(String message) {
+    public static <D> ResponseDto<D> setSuccess(String message) {
         return ResponseDto.set(true, message, "200", null);
     }
 
-    public static <D> ResponseDto<D> setFailed(String message)
-    {
+    public static <D> ResponseDto<D> setFailed(String message) {
         return ResponseDto.set(false, message, "400", null);
     }
 

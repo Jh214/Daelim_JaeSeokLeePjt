@@ -46,7 +46,7 @@ public class Student {
 //    @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
 //    private List<SeatTable> seatTable;
 
-    public void update(StudentUpdateDto updateDto){
+    public void update(StudentUpdateDto updateDto) {
         this.studentName = updateDto.getStudentName();
         this.studentNum = updateDto.getStudentNum();
         this.studentAge = updateDto.getStudentAge();

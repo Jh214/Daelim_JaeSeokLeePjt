@@ -15,7 +15,7 @@ public class MessagesController {
     private final MessagesService messagesService;
 
     @GetMapping("/view")
-    public ResponseDto<?> messageView(@RequestParam(name = "userId") String userId, @RequestParam(name = "recId") String recId){
+    public ResponseDto<?> messageView(@RequestParam(name = "userId") String userId, @RequestParam(name = "recId") String recId) {
         ResponseDto<?> result = messagesService.viewer(userId, recId);
 
         return result;

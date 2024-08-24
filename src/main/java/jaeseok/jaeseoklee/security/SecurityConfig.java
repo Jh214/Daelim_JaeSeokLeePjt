@@ -31,11 +31,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 해당 엔드포인트는 접근 허용
+                        .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 해당 엔드포인트는 접근 허용
 ////                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") <- 이건 자동으로 문자열 앞에 "ROLE_" 이 추가됨
 //                        .requestMatchers("/api/student/**").hasAuthority("USER") // "USER" 역할(role)을 가진 사용자만 허용
 //                        .requestMatchers("/api/user/**").authenticated() // 토큰 검증이 완료된 사용자만 허용
-                        .anyRequest().permitAll() // 나머지 모든 엔드포인트 허용
+                                .requestMatchers("/api/user/updatePassword/**").authenticated() // 임시로 비번 변경 페이지만 검증하도록
+                                .anyRequest().permitAll() // 나머지 모든 엔드포인트 허용
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
@@ -47,6 +48,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {

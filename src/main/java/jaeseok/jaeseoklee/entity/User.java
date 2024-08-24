@@ -49,12 +49,12 @@ public class User implements UserDetails {
     private int classNum;
 
 
-    @ElementCollection(fetch = FetchType.EAGER) // User 를 검증하기 위한 role 을 즉시 로드하기 위해 ENGER 사용
+    @ElementCollection(fetch = FetchType.EAGER) // "USER"를 검증해야하기 때문에 즉시로딩을 사용
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "uid"))
     @Column(name = "role")
     private List<String> roles;
 
-//    getAuthorities() 사용자 권한을 반환하는 메서드
+    //    getAuthorities() 사용자 권한을 반환하는 메서드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -92,10 +92,10 @@ public class User implements UserDetails {
         return true;
     }
 
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Student> student;
 
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Messages> messages;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -104,11 +104,14 @@ public class User implements UserDetails {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<SeatTable> seatTable;
 
-    public void update(UpdateDto updateDto, String hashedPassword, String creationUserNumDash){
-        this.userPw = hashedPassword;
+    public void update(UpdateDto updateDto, String creationUserNumDash) {
         this.userRealName = updateDto.getUserName();
         this.userNum = creationUserNumDash;
         this.schoolName = updateDto.getSchoolName();
         this.classNum = updateDto.getClassNum();
+    }
+
+    public void updatePassword(String hashPassword){
+        this.userPw = hashPassword;
     }
 }

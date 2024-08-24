@@ -37,7 +37,7 @@ public class Schedule {
     @JoinColumn(name = "uid")
     private User user;
 
-    public void update(ScheduleUpdateDto updateDto){
+    public void update(ScheduleUpdateDto updateDto) {
         this.subject = updateDto.getSubject();
         this.location = updateDto.getLocation();
         this.startTime = updateDto.getStartTime();

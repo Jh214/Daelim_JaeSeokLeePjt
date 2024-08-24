@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 public class UserDetailDto {
     private String userId;
-    private String userName;
+    private String userRealName;
     private String userNum;
     private String userDate;
     private String userEmail;

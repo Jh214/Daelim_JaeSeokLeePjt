@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateDto {
-    private String userName;
-    private String userNum;
-    private String schoolName;
-    private int classNum;
+@AllArgsConstructor
+public class UpdatePasswrodDto {
+    private String userPw;
+    private String userConPw;
 }

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class QueryDslConfig {
     private final EntityManager entityManager;
 
-//    JPAQueryFactory Bean 정의
+    //    JPAQueryFactory Bean 정의
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);
