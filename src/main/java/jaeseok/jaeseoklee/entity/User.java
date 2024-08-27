@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private int classNum;
 
 
-    @ElementCollection(fetch = FetchType.EAGER) // "USER"를 검증해야하기 때문에 즉시로딩을 사용
+    @ElementCollection(fetch = FetchType.EAGER) // "USER" 역할을 검증해야하기 때문에 즉시로딩 사용
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "uid"))
     @Column(name = "role")
     private List<String> roles;

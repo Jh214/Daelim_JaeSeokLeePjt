@@ -1,9 +1,9 @@
 package jaeseok.jaeseoklee.entity.student;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
 public enum Grade {
     firstGrade("1학년"),
@@ -14,4 +14,9 @@ public enum Grade {
     sixthGrade("6학년");
 
     private final String gradeDescription;
+
+    @JsonValue
+    public String getGradeDescription() {
+        return gradeDescription;
+    }
 }

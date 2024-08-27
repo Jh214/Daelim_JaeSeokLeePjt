@@ -82,7 +82,7 @@ public class JwtTokenProvider {
         // 비밀번호 검증 토큰 생성
         String passwordVerificationToken = Jwts.builder()
                 .setSubject(username)
-                .claim("purpose", "password_verification") // purpose 라는 클레임은 password_verification 이라는 값을 가짐
+                .claim("purpose", "password_verification") // purpose 클레임이 password_verification 을 포함함
                 .setExpiration(tokenExpirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact(); //

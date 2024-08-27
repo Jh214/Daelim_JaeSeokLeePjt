@@ -1,11 +1,11 @@
-package jaeseok.jaeseoklee.controller;
+package jaeseok.jaeseoklee.controller.student;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
 import jaeseok.jaeseoklee.entity.student.Grade;
-import jaeseok.jaeseoklee.service.StudentService;
+import jaeseok.jaeseoklee.service.student.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +57,8 @@ public class StudentController {
 
         return result;
     }
+
+//    @PostMapping("/attendance")
+//    public ResponseDto<?> studentAttendance(@RequestBody Attendance attendance) {}
 
 }

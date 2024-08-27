@@ -44,9 +44,12 @@ public class UserController {
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseDto<?> update(@PathVariable(name = "userId") String userId, @RequestBody UpdateDto updateDto) {
+    public ResponseDto<?> update(@PathVariable(name = "userId") String userId,
+                                 @RequestBody UpdateDto updateDto,
+                                 @RequestHeader("PasswordVerAuth") String token) {
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-        ResponseDto<?> result = userService.update(userId, updateDto);
+        ResponseDto<?> result = userService.update(userId, updateDto, jwtToken);
         return result;
     }
 
@@ -61,8 +64,12 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseDto<?> delete(@PathVariable(name = "userId") String userId) {
-        ResponseDto<?> result = userService.delete(userId);
+    public ResponseDto<?> delete(@PathVariable(name = "userId") String userId,
+                                 @RequestHeader("PasswordVerAuth") String token) {
+
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+        ResponseDto<?> result = userService.delete(userId, jwtToken);
         return result;
     }
 

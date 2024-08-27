@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.service;
+package jaeseok.jaeseoklee.service.student;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;

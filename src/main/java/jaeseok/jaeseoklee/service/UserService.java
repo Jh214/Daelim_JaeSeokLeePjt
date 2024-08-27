@@ -17,10 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -131,14 +128,20 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
-    public ResponseDto<?> update(String userId, UpdateDto dto) {
+    public ResponseDto<?> update(String userId, UpdateDto dto, String token) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
+        // JWT 토큰 검증
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
 
-        if (userRepository.existsByUserNum(dto.getUserNum())) {
-            return ResponseDto.setFailed("이미 등록된 핸드폰 번호 입니다.");
+        // 비밀번호 인증이 성공한 사용자인지 확인
+        Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
+        if (!authentication.getName().equals(userId)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
         }
 
 //        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성
@@ -173,13 +176,16 @@ public class UserService {
         if (!authentication.getName().equals(userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
+        User user = userOptional.get();
+
+        if (!bCryptPasswordEncoder.matches(dto.getCurrentPw(), user.getUserPw())) {
+            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
+        }
 
         // 새로운 비밀번호 확인
         if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
-
-        User user = userOptional.get();
 
         // 비밀번호 해싱
         String hashedPassword = bCryptPasswordEncoder.encode(dto.getUserPw());
@@ -206,7 +212,7 @@ public class UserService {
 
         // 비밀번호 확인
         if (confirmPasswordDto.getUserPw() != null && !bCryptPasswordEncoder.matches(confirmPasswordDto.getUserPw(), user.getPassword())) {
-            return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
+            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
         Authentication authentication = new UsernamePasswordAuthenticationToken( // Authentication 객체 생성
                 user.getUserId(),
@@ -216,10 +222,20 @@ public class UserService {
         return ResponseDto.setSuccessData("인증되었습니다", jwtConfirmPasswordTokenDto);
     }
 
-    public ResponseDto<?> delete(String userId) {
+    public ResponseDto<?> delete(String userId, String token) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
+        }
+        // JWT 토큰 검증
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
+        }
+
+        // 비밀번호 인증 여부 확인
+        Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
+        if (!authentication.getName().equals(userId)) {
+            return ResponseDto.setFailed("권한이 없습니다.");
         }
 
         User user = optionalUser.get();
@@ -241,12 +257,14 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
+        String userNum = optionalUser.get().getUserNum().replaceAll("[^a-zA-Z0-9]", "");
+//        정규식으로 특수문자 제거
 
         List<UserDetailDto> userView = optionalUser.stream()
                 .map(user -> new UserDetailDto(
                         user.getUserId(),
                         user.getUserRealName(),
-                        user.getUserNum(),
+                        userNum,
                         user.getUserDate(),
                         user.getUserEmail(),
                         user.getSchoolName(),

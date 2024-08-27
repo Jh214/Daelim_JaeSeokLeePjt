@@ -43,8 +43,8 @@ public class Student {
     @JsonIgnore
     private User user;
 
-//    @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
-//    private List<SeatTable> seatTable;
+    @OneToMany(mappedBy = "student", cascade =  CascadeType.ALL, orphanRemoval = true)
+    private List<StudentAttendanceTable> studentAttendanceTable;
 
     public void update(StudentUpdateDto updateDto) {
         this.studentName = updateDto.getStudentName();

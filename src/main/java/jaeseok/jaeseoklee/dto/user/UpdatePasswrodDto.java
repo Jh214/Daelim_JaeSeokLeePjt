@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class UpdatePasswrodDto {
     private String userPw;
     private String userConPw;
+    private String currentPw;
 }
