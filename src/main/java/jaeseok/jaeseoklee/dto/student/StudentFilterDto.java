@@ -14,6 +14,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class StudentFilterDto {
     private String userId;
-    private Grade studentGrade;
-    private int classNum;
+    private Grade studentGrade = null;
+    private int classNum = 0;
+    private int page = 0;
+    private int size = 12;
 }

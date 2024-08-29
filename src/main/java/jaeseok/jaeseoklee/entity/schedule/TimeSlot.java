@@ -4,23 +4,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public enum TimeSlot {
-    EightAM("08:00"),
-    NineAM("09:00"),
-    TenAM("10:00"),
-    ElevenAM("11:00"),
-    TwelvePM("12:00"),
-    OnePM("13:00"),
-    TwoPM("14:00"),
-    ThreePM("15:00"),
-    FourPM("16:00"),
-    FivePM("17:00"),
-    SixPM("18:00"),
-    SevenPM("19:00"),
-    EightPM("20:00"),
-    NinePM("21:00"),
-    TenPM("22:00");
+    EIGHTAM("08:00"),
+    NINEAM("09:00"),
+    TENAM("10:00"),
+    ELEVENAM("11:00"),
+    TWELVEPM("12:00"),
+    ONEPM("13:00"),
+    TWOPM("14:00"),
+    THREEPM("15:00"),
+    FOURPM("16:00"),
+    FIVEPM("17:00"),
+    SIXPM("18:00"),
+    SEVENPM("19:00"),
+    EIGHTPM("20:00"),
+    NINEPM("21:00"),
+    TENPM("22:00");
 
     private final String description;
 

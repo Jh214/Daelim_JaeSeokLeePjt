@@ -40,8 +40,7 @@ public class StudentService {
                 .studentName(registerDto.getStudentName())
                 .studentNum(registerDto.getStudentNum())
                 .studentGender(registerDto.getStudentGender())
-                .studentAge(registerDto.getStudentAge())
-                .schoolName(registerDto.getSchoolName())
+                .studentDate(registerDto.getStudentDate())
                 .studentGrade(registerDto.getStudentGrade())
                 .classNum(registerDto.getClassNum())
                 .user(user) // 다대일 연관관계 설정
@@ -52,18 +51,30 @@ public class StudentService {
         return ResponseDto.setSuccess("학생이 등록되었습니다.");
     }
 
-    public ResponseDto<?> studentInfo(String userId, int page, int size) {
+    public ResponseDto<?> studentInfo(StudentFilterDto studentFilterDto) {
+        String userId = studentFilterDto.getUserId();
+        int page = studentFilterDto.getPage();
+        int size = studentFilterDto.getSize();
+
+        if (userId == null || userId.isEmpty()) {
+            return ResponseDto.setFailed("잘못된 요청입니다.");
+        }
         Pageable pageable = PageRequest.of(page, size);
-        Page<Student> studentsPage = studentRepository.findByUserId(userId, pageable);
+
+        // 필터링된 학생 목록 조회
+        Page<Student> studentsPage = studentRepository.findStudentsByUserIdAndGrade(studentFilterDto, pageable);
 
         if (studentsPage.isEmpty()) {
-            return ResponseDto.setFailed("학생 정보가 없습니다.");
+            return ResponseDto.setFailed("조건에 맞는 학생 정보가 없습니다.");
         }
-        List<StudentViewDto> viewDto = studentsPage.stream()
-                .map(this::convertToDto)
+
+        List<Student> students = studentsPage.getContent();
+
+        List<StudentViewDto> studentViewDto = students.stream()
+                .map(this::convertToDto)  // `convertToDto` 메서드를 통해 변환
                 .collect(Collectors.toList());
 
-        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", viewDto);
+        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", studentViewDto);
     }
 
     private StudentViewDto convertToDto(Student student) {
@@ -71,8 +82,7 @@ public class StudentService {
                 student.getStudentName(),
                 student.getStudentNum(),
                 student.getStudentGender(),
-                student.getStudentAge(),
-                student.getSchoolName(),
+                student.getStudentDate(),
                 student.getStudentGrade(),
                 student.getClassNum()
         );
@@ -118,37 +128,6 @@ public class StudentService {
         }
 
         return ResponseDto.setSuccess("학생이 성공적으로 삭제되었습니다.");
-    }
-
-    public ResponseDto<?> filteringStudent(StudentFilterDto studentFilterDto) {
-        String userId = studentFilterDto.getUserId();
-        Grade studentGrade = studentFilterDto.getStudentGrade();
-        int classNum = studentFilterDto.getClassNum();
-
-        if (userId == null || userId.isEmpty()) {
-            return ResponseDto.setFailed("잘못된 요청입니다.");
-        }
-        if (studentGrade == null) {
-            return ResponseDto.setFailed("학년을 선택해주세요.");
-        }
-        if (classNum == 0) {
-            return ResponseDto.setFailed("반을 선택해주세요.");
-        }
-
-        int page = 0;
-        int size = 10;
-        Pageable pageable = PageRequest.of(page, size);
-
-        // 필터링된 학생 목록 조회
-        Page<Student> studentsPage = studentRepository.findStudentsByUserIdAndGrade(studentFilterDto, pageable);
-
-        if (studentsPage.isEmpty()) {
-            return ResponseDto.setFailed("조건에 맞는 학생 정보가 없습니다.");
-        }
-
-        List<Student> students = studentsPage.getContent();
-
-        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", students);
     }
 
 }

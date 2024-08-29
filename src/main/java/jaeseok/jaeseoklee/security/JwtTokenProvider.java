@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
+import jaeseok.jaeseoklee.dto.jwt.JWTVerificationEmailCodeDto;
 import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,6 +93,31 @@ public class JwtTokenProvider {
                 .accessPwToken(passwordVerificationToken)
                 .build();
     }
+//  이메일 인증 검증을 위한 토큰 생성 메서드
+    public JWTVerificationEmailCodeDto generateEmailCodeVerificationToken(Authentication authentication) {
+        // 인증된 사용자의 정보 가져오기
+        String username = authentication.getName();
+
+        // 현재 시간 가져오기
+        long now = (new Date()).getTime();
+
+        // 비밀번호 검증 토큰의 만료 시간을 설정
+        long expirationInMillis = Duration.ofMinutes(5).toMillis();
+        Date tokenExpirationDate = new Date(now + expirationInMillis);
+
+        // 이메일 인증 검증 토큰 생성
+        String emailCodeVerificationToken = Jwts.builder()
+                .setSubject(username)
+                .claim("purpose", "email_verification") // purpose 클레임이 password_verification 을 포함함
+                .setExpiration(tokenExpirationDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact(); //
+
+        return JWTVerificationEmailCodeDto.builder()
+                .grantType("Bearer")
+                .accessEmailToken(emailCodeVerificationToken)
+                .build();
+    }
 
 
     // Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
@@ -130,6 +156,22 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    public Authentication getEmailAuthentication(String accessEmailToken) {
+        Claims claims = parseClaims(accessEmailToken);
+
+        // "purpose" 클레임이 없으며 password_verification 라는 값을 가진 purpose 클레임이 아니면 권한이 없다는 예외처리
+        if (claims.get("purpose") == null || !"email_verification".equals(claims.get("purpose"))) {
+            throw new RuntimeException("이메일 인증 권한 정보가 없는 토큰입니다.");
+        }
+
+        // 비밀번호 검증 토큰은 권한 정보가 필요 없음
+        Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
+
+        // UserDetails 객체를 생성하여 Authentication 반환
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
 
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
@@ -157,6 +199,16 @@ public class JwtTokenProvider {
             return "password_verification".equals(claims.get("purpose")); // purpose 클레임이 password_verification 을 가지고 있는지 검증
         } catch (Exception e) {
             log.info("Invalid Password Verification Token", e);
+        }
+        return false;
+    }
+
+    public boolean validateEmailVerificationToken(String token) {
+        try {
+            Claims claims = parseClaims(token);
+            return "email_verification".equals(claims.get("purpose")); // purpose 클레임이 password_verification 을 가지고 있는지 검증
+        } catch (Exception e) {
+            log.info("Invalid Email Verification Token", e);
         }
         return false;
     }

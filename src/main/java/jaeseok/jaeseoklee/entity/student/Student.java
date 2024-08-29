@@ -28,10 +28,8 @@ public class Student {
     private String studentNum;
     @Column(nullable = false, name = "studentGender")
     private String studentGender;
-    @Column(nullable = false, name = "studentAge")
-    private String studentAge;
-    @Column(nullable = false, name = "schoolName")
-    private String schoolName;
+    @Column(nullable = false, name = "studentDate")
+    private String studentDate;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "studentGrade")
     private Grade studentGrade;
@@ -49,6 +47,6 @@ public class Student {
     public void update(StudentUpdateDto updateDto) {
         this.studentName = updateDto.getStudentName();
         this.studentNum = updateDto.getStudentNum();
-        this.studentAge = updateDto.getStudentAge();
+        this.studentDate = updateDto.getStudentDate();
     }
 }

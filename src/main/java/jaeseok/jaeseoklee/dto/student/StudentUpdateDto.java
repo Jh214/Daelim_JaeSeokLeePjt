@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class StudentUpdateDto {
     private String studentName;
     private String studentNum;
-    private String studentAge;
+    private String studentDate;
     private Long uid;
     private Long studentId;
 }

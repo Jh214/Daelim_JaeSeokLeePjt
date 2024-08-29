@@ -13,9 +13,8 @@ import lombok.NoArgsConstructor;
 public class StudentRegisterDto {
     private String studentName;
     private String studentNum;
-    private String studentAge;
+    private String studentDate;
     private String studentGender;
-    private String schoolName;
     private Grade studentGrade;
     private int classNum;
     private Long uid;
