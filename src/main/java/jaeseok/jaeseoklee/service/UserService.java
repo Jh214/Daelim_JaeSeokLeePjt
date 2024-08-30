@@ -292,7 +292,7 @@ public class UserService {
     private final ConcurrentMap<String, SendEmailDto> codeStore = new ConcurrentHashMap<>();
 
     public ResponseDto<?> sendFindPasswordEmailCode(SendEmailDto mailDto) {
-        Optional<User> userOptional = userRepository.findByUserId(mailDto.getUserId());
+        Optional<User> userOptional = userRepository.findByUserEmail(mailDto.getEmailAddr());
 
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
