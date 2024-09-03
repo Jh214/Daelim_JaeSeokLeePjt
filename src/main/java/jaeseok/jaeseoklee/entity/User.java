@@ -114,4 +114,9 @@ public class User implements UserDetails {
     public void updatePassword(String hashPassword){
         this.userPw = hashPassword;
     }
+
+    public User(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
 }

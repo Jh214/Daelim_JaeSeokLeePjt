@@ -45,7 +45,4 @@ public class StudentController {
         return result;
     }
 
-//    @PostMapping("/attendance")
-//    public ResponseDto<?> studentAttendance(@RequestBody Attendance attendance) {}
-
 }

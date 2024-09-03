@@ -19,11 +19,10 @@ public class StudentAttendanceTable {
     private Long attendanceId;
     @Enumerated(EnumType.STRING)
     private Attendance attendanceStatus;
-    @Column(name = "attendace_reason")
+    @Column(name = "attendance_reason")
     private String attendanceReason;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private Student student;
 
 }

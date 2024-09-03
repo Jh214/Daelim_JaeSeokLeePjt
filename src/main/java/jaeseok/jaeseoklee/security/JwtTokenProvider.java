@@ -101,14 +101,14 @@ public class JwtTokenProvider {
         // 현재 시간 가져오기
         long now = (new Date()).getTime();
 
-        // 비밀번호 검증 토큰의 만료 시간을 설정
+        // 토큰의 만료 시간을 설정
         long expirationInMillis = Duration.ofMinutes(5).toMillis();
         Date tokenExpirationDate = new Date(now + expirationInMillis);
 
-        // 이메일 인증 검증 토큰 생성
+        // 토큰 생성
         String emailCodeVerificationToken = Jwts.builder()
                 .setSubject(username)
-                .claim("purpose", "email_verification") // purpose 클레임이 password_verification 을 포함함
+                .claim("purpose", "email_verification") // purpose 클레임이 email_verification 을 포함함
                 .setExpiration(tokenExpirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact(); //

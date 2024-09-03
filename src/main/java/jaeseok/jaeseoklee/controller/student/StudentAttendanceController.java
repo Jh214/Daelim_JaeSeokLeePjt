@@ -1,11 +1,22 @@
 package jaeseok.jaeseoklee.controller.student;
 
+import jaeseok.jaeseoklee.dto.ResponseDto;
+import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
+import jaeseok.jaeseoklee.dto.student.attendance.AttendanceViewDto;
+import jaeseok.jaeseoklee.service.student.StudentAttendanceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/studentAttendance")
+@RequestMapping("/api/studentForAttendance")
 public class StudentAttendanceController {
+    private final StudentAttendanceService studentAttendanceService;
+
+    @GetMapping("/view")
+    public ResponseDto<?> viewStudentAttendance(@ModelAttribute StudentFilterDto filterDto) {
+        ResponseDto<?> result = studentAttendanceService.view(filterDto);
+
+        return result;
+    }
 }

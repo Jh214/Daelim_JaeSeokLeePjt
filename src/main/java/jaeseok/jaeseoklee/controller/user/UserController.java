@@ -1,8 +1,9 @@
-package jaeseok.jaeseoklee.controller;
+package jaeseok.jaeseoklee.controller.user;
 
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
-import jaeseok.jaeseoklee.service.UserService;
+import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
+import jaeseok.jaeseoklee.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,9 +90,17 @@ public class UserController {
     }
 
 //    이메일 중복 검사
-    @PostMapping("/checkEmail/{userEmail}")
-    public ResponseDto<?> CheckEmail(@PathVariable(name = "userEmail") String userEmail) {
-        ResponseDto<?> result = userService.checkEmail(userEmail);
+    @PostMapping("/checkEmail")
+    public ResponseDto<?> CheckEmail(@RequestBody SendEmailSignUpDto emailSignUpDto) {
+        ResponseDto<?> result = userService.checkEmail(emailSignUpDto);
+
+        return result;
+    }
+
+    @PostMapping("/verificationSignUpEmailCode")
+    public ResponseDto<?> verSignUpCode(@RequestBody VerificationCodeDto verCodeDto){
+
+        ResponseDto<?> result = userService.verificationSignUpEmailCode(verCodeDto);
 
         return result;
     }
@@ -101,33 +110,6 @@ public class UserController {
     public ResponseDto<?> CheckNum(@PathVariable(name = "CheckNum") String CheckNum) {
         ResponseDto<?> result = userService.checkNum(CheckNum);
 
-        return result;
-    }
-
-//    인증메일 보내기
-    @PostMapping("/sendEmail")
-    public ResponseDto<?> sendEmail(@RequestBody SendEmailDto mailDto) {
-        ResponseDto<?> result = userService.sendFindPasswordEmailCode(mailDto);
-
-        return result;
-    }
-
-//    이메일 인증 확인
-    @PostMapping("/verificationEmailCode")
-    public ResponseDto<?> verCode(@RequestBody VerificationCodeDto verCodeDto){
-
-        ResponseDto<?> result = userService.verificationEmailCode(verCodeDto);
-
-        return result;
-    }
-
-//    비밀번호 찾기를 통해 이메일 인증이 완료된 사용자에 한하여 비밀번호 변경
-    @PutMapping("/findPassword")
-    public ResponseDto<?> updatePassword(@RequestBody FindPasswordDto findPasswordDto,
-                                         @RequestHeader("EmailVerAuth") String token) {
-        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-
-        ResponseDto<?> result = userService.findPassword(findPasswordDto, jwtToken);
         return result;
     }
 }

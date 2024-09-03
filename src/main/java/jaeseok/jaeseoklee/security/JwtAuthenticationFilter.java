@@ -23,8 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         String requestURI = request.getRequestURI();
 
-        // /api/user/update/ 엔드포인트에서만 검증
-        if (!requestURI.startsWith("/api/user/findPassword/")) {
+        // /api/user/findPassword/,  /api/user/signup/ 엔드포인트에서는 검증 안함
+        if (!requestURI.startsWith("/api/user/findPassword/") &&
+                requestURI.startsWith("/api/user/signup/")) {
         // 2. validateToken 으로 토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {
             // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장

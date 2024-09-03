@@ -1,10 +1,10 @@
-package jaeseok.jaeseoklee.service;
+package jaeseok.jaeseoklee.service.user;
 
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
-import jaeseok.jaeseoklee.dto.jwt.JWTVerificationEmailCodeDto;
 import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
 import jaeseok.jaeseoklee.dto.user.*;
+import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;
@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +44,7 @@ public class UserService {
     @Autowired
     private JavaMailSender emailSender;
 
-    // ResponseDto를 반환하는 signUp(회원가입) 메서드
+    // 회원가입
     public ResponseDto<?> signUp(SignUpDto dto) {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
@@ -84,6 +83,7 @@ public class UserService {
         return ResponseDto.setSuccess("회원 생성에 성공했습니다.");
     }
 
+//    아이디 중복 검사
     public ResponseDto<?> checkId(String userId) {
         if (userRepository.existsByUserId(userId)) {
             return ResponseDto.setFailed("이미 등록된 아이디입니다.");
@@ -91,13 +91,65 @@ public class UserService {
         return ResponseDto.setSuccess("등록 가능한 아이디입니다.");
     }
 
-    public ResponseDto<?> checkEmail(String userEmail) {
-        if (userRepository.existsByUserEmail(userEmail)) {
+//    이메일 인증 및 이메일 중복 검사
+private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new ConcurrentHashMap<>();
+
+    public ResponseDto<?> checkEmail(SendEmailSignUpDto mailDto) {
+        if (userRepository.existsByUserEmail(mailDto.getUserEmail())) {
             return ResponseDto.setFailed("이미 등록된 이메일 입니다.");
         }
-        return ResponseDto.setSuccess("등록 가능한 이메일 입니다.");
+
+        String mailAddr = mailDto.getUserEmail();
+
+        int ranCode = mailDto.getRanCode();
+        LocalDateTime timeLimit = mailDto.getTimeLimit();
+
+        SendEmailSignUpDto newSendEmailSignUpDto = new SendEmailSignUpDto(mailAddr,ranCode, timeLimit);
+        codeStore.put(mailAddr, newSendEmailSignUpDto);
+
+        String mailContent = newSendEmailSignUpDto.getEmailContent();
+
+        MimeMessage message = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("jsl@gosky.kr"); // 발신자
+            helper.setTo(mailAddr); // 수신자
+            helper.setSubject("[TeacHub] 메일인증 코드입니다."); // 제목
+            helper.setText(mailContent, true); // 이메일 내용 설정
+
+            // 이메일 전송
+            emailSender.send(message);
+
+        } catch (MessagingException | MailException e) {
+            log.error("메일 전송 중 오류 발생: {}", e.getMessage(), e);
+            return ResponseDto.setFailed("메일 전송에 실패하였습니다. 다시 시도해주세요.");
+        }
+
+        return ResponseDto.setSuccess("메일이 전송되었습니다.");
     }
 
+//    이메일 인증코드 검증
+    public ResponseDto<?> verificationSignUpEmailCode(VerificationCodeDto verCode) {
+        SendEmailSignUpDto sendEmailSignUpDto = codeStore.get(verCode.getEmailAddr());
+
+        if (sendEmailSignUpDto == null) {
+            return ResponseDto.setFailed("해당 이메일로 보낸 인증 코드가 없습니다.");
+        }
+
+        if (LocalDateTime.now().isAfter(sendEmailSignUpDto.getTimeLimit())) {
+            codeStore.remove(verCode.getEmailAddr());  // 5분 지나면 코드 삭제
+            return ResponseDto.setFailed("인증 코드가 만료되었습니다. 다시 시도해주세요.");
+        }
+
+        if (sendEmailSignUpDto.getRanCode() != verCode.getInputCode()) {
+            return ResponseDto.setFailed("인증 코드가 일치하지 않습니다.");
+        }
+
+        codeStore.remove(verCode.getEmailAddr()); // 인증 성공 후 코드를 삭제
+        return ResponseDto.setSuccess("인증이 성공적으로 완료되었습니다.");
+    }
+
+//    전화번호 중복 검사
     public ResponseDto<?> checkNum(String userNum) {
         String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
@@ -106,6 +158,7 @@ public class UserService {
         return ResponseDto.setSuccess("등록 가능한 전화번호 입니다.");
     }
 
+//    로그인
     public ResponseDto<?> login(LoginDto dto) {
         String userId = dto.getUserId();
         String password = dto.getUserPw();
@@ -142,6 +195,7 @@ public class UserService {
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
+//    회원수정
     public ResponseDto<?> update(String userId, UpdateDto dto, String token) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
@@ -175,6 +229,8 @@ public class UserService {
 
         return ResponseDto.setSuccess("회원 정보가 성공적으로 수정되었습니다.");
     }
+
+//    비밀번호 수정
     public ResponseDto<?> updatePassword(String userId, UpdatePasswrodDto dto, String token) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
@@ -216,6 +272,7 @@ public class UserService {
         return ResponseDto.setSuccess("비밀번호가 성공적으로 수정되었습니다.");
     }
 
+//    현재 비밀번호 검증
     public ResponseDto<?> confirmPw(String userId, ConfirmPasswordDto confirmPasswordDto) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
@@ -236,6 +293,7 @@ public class UserService {
         return ResponseDto.setSuccessData("인증되었습니다", jwtConfirmPasswordTokenDto);
     }
 
+//    회원삭제
     public ResponseDto<?> delete(String userId, String token) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()) {
@@ -266,6 +324,7 @@ public class UserService {
         }
     }
 
+//    회원정보
     public ResponseDto<?> userDetail(String userId) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()) {
@@ -287,122 +346,4 @@ public class UserService {
                 .collect(Collectors.toList());
         return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);
     }
-
-
-    private final ConcurrentMap<String, SendEmailDto> codeStore = new ConcurrentHashMap<>();
-
-    public ResponseDto<?> sendFindPasswordEmailCode(SendEmailDto mailDto) {
-        Optional<User> userOptional = userRepository.findByUserEmail(mailDto.getEmailAddr());
-
-        if (!userOptional.isPresent()) {
-            return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
-        }
-
-        User user = userOptional.get();
-        String mailAddr = mailDto.getEmailAddr();
-        String userId = user.getUserId();
-
-        if (!user.getUserEmail().equals(mailAddr)) {
-            return ResponseDto.setFailed("등록된 이메일과 일치하지 않습니다.");
-        }
-
-        int ranCode = mailDto.getRanCode();
-        LocalDateTime timeLimit = mailDto.getTimeLimit();
-
-        SendEmailDto newSendEmailDto = new SendEmailDto(mailAddr, userId,ranCode, timeLimit);
-        codeStore.put(mailAddr, newSendEmailDto);
-
-        String mailContent = newSendEmailDto.getEmailContent();
-
-        MimeMessage message = emailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("jsl@gosky.kr"); // 발신자
-            helper.setTo(mailAddr); // 수신자
-            helper.setSubject("[TeacHub] 메일인증 코드입니다."); // 제목
-            helper.setText(mailContent, true); // 이메일 내용 설정
-
-            // 이메일 전송
-            emailSender.send(message);
-
-        } catch (MessagingException | MailException e) {
-            log.error("메일 전송 중 오류 발생: {}", e.getMessage(), e);
-            return ResponseDto.setFailed("메일 전송에 실패하였습니다. 다시 시도해주세요.");
-        }
-
-        return ResponseDto.setSuccess("메일이 전송되었습니다.");
-    }
-
-
-    public ResponseDto<?> verificationEmailCode(VerificationCodeDto verCode) {
-        Optional<User> userOptional = userRepository.findByUserEmail(verCode.getEmailAddr());
-        String emailAddr = verCode.getEmailAddr();
-        int inputCode = verCode.getInputCode();
-
-        SendEmailDto sendEmailDto = codeStore.get(emailAddr);
-
-        if (sendEmailDto == null) {
-            return ResponseDto.setFailed("해당 이메일로 보낸 인증 코드가 없습니다.");
-        }
-
-        if (LocalDateTime.now().isAfter(sendEmailDto.getTimeLimit())) {
-            codeStore.remove(emailAddr);  // 5분 지나면 코드 삭제
-            return ResponseDto.setFailed("인증 코드가 만료되었습니다. 다시 시도해주세요.");
-        }
-
-        if (sendEmailDto.getRanCode() != inputCode) {
-            return ResponseDto.setFailed("인증 코드가 일치하지 않습니다.");
-        }
-
-        User user = userOptional.get();
-
-//        이 부분은 5분짜리 이메일인증토큰 생성 로직이 들어갈 예정
-        Authentication authentication = new UsernamePasswordAuthenticationToken( // Authentication 객체 생성
-                user.getUserId(),
-                null,
-                userOptional.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
-        JWTVerificationEmailCodeDto jwtVerificationEmailCodeDto = jwtTokenProvider.generateEmailCodeVerificationToken(authentication);
-
-        codeStore.remove(emailAddr); // 인증 성공 후 코드를 삭제
-        return ResponseDto.setSuccessData("인증이 성공적으로 완료되었습니다.", jwtVerificationEmailCodeDto);
-    }
-
-    public ResponseDto<?> findPassword(FindPasswordDto dto, String token) {
-        String userId = dto.getUserId();
-        Optional<User> userOptional = userRepository.findByUserId(userId);
-        if (!userOptional.isPresent()) {
-            return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
-        }
-        // JWT 토큰 검증
-        if (!jwtTokenProvider.validateEmailVerificationToken(token)) {
-            return ResponseDto.setFailed("권한이 없습니다.");
-        }
-
-        // 이메일 인증이 성공한 사용자인지 확인
-        Authentication authentication = jwtTokenProvider.getEmailAuthentication(token);
-        if (!authentication.getName().equals(userId)) {
-            return ResponseDto.setFailed("권한이 없습니다.");
-        }
-        User user = userOptional.get();
-
-        // 새로운 비밀번호 확인
-        if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
-            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 비밀번호 해싱
-        String hashedPassword = bCryptPasswordEncoder.encode(dto.getUserPw());
-
-        user.updatePassword(hashedPassword);
-
-        try {
-            // db에 사용자 저장
-            userRepository.save(user);
-        } catch (Exception e) {
-            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
-        }
-
-        return ResponseDto.setSuccess("비밀번호가 성공적으로 변경되었습니다.");
-    }
-
 }
