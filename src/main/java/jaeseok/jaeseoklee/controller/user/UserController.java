@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.controller.user;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
@@ -7,6 +8,7 @@ import jaeseok.jaeseoklee.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "회원(교사)", description = "회원 관련 api")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

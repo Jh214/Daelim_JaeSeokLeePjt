@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/login", "/api/user/checkId/**",
                                         "/api/user/checkEmail/**", "/api/user/checkNum/**",
                                         "/api/user/sendEmail", "/api/user/verificationEmailCode",
-                                        "/api/user/verificationSignUpEmailCode", "/api/user/findUserIdByUserEmailCode").permitAll() // 해당 엔드포인트는 접근 허용
+                                        "/api/user/verificationSignUpEmailCode", "/api/user/findUserIdByUserEmailCode",
+                                        "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 해당 엔드포인트는 접근 허용
 ////                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") <- 이건 자동으로 문자열 앞에 "ROLE_" 이 추가됨
 //                        .requestMatchers("/api/student/**", "/api/user/**").hasAuthority("USER") // "USER" 역할(role)을 가진 사용자만 허용
                         .requestMatchers("/api/user/**").authenticated() // 토큰 검증이 완료된 사용자만 허용
