@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.dto.messages;
+package jaeseok.jaeseoklee.dto.websocket;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessagesViewDto {
+public class ChatHistoryViewDto {
     private String message;
     private LocalDateTime timestamp;
 }

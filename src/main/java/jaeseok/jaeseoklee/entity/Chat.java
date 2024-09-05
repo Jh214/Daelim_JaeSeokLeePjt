@@ -13,15 +13,17 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name = "messages")
+@Table(name = "chat")
 @Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Messages {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mid;
+    private Long chatId;
+    @Column(name = "chat_room_id")
+    private Long chatRoomId;
     @Column(name = "message")
     private String message;
     @CreationTimestamp

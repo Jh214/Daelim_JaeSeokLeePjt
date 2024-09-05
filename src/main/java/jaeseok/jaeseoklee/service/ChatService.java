@@ -1,7 +1,7 @@
 package jaeseok.jaeseoklee.service;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
-import jaeseok.jaeseoklee.entity.Messages;
+import jaeseok.jaeseoklee.entity.Chat;
 import jaeseok.jaeseoklee.repository.MessagesRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +13,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MessagesService {
+public class ChatService {
 
     private final MessagesRepository messagesRepository;
 
     public ResponseDto<?> viewer(String userId, String recId) {
-        List<Messages> messagesListByUserId = messagesRepository.findByUserIdOrderByTimestampAsc(userId);
-        List<Messages> messagesListByRecId = messagesRepository.findByRecIdOrderByTimestampAsc(recId);
+        List<Chat> messagesListByUserId = messagesRepository.findByUserIdOrderByTimestampAsc(userId);
+        List<Chat> messagesListByRecId = messagesRepository.findByRecIdOrderByTimestampAsc(recId);
 
-        List<Messages> messagesList = new ArrayList<>(messagesListByUserId);
+        List<Chat> messagesList = new ArrayList<>(messagesListByUserId);
         messagesList.retainAll(messagesListByRecId);
 
         if (messagesList.isEmpty()) {

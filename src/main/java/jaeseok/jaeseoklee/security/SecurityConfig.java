@@ -25,17 +25,27 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    private static final String[] AUTH_WHITE_LIST = {
+            "/api/user/signup",
+            "/api/user/login",
+            "/api/user/checkId/**",
+            "/api/user/checkEmail/**",
+            "/api/user/checkNum/**",
+            "/api/user/sendEmail",
+            "/api/user/verificationEmailCode",
+            "/api/user/verificationSignUpEmailCode",
+            "/api/user/findUserIdByUserEmailCode",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                                .requestMatchers("/api/user/login", "/api/user/checkId/**",
-                                        "/api/user/checkEmail/**", "/api/user/checkNum/**",
-                                        "/api/user/sendEmail", "/api/user/verificationEmailCode",
-                                        "/api/user/verificationSignUpEmailCode", "/api/user/findUserIdByUserEmailCode",
-                                        "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 해당 엔드포인트는 접근 허용
+                                .requestMatchers(AUTH_WHITE_LIST).permitAll() // 해당 엔드포인트는 접근 허용
 ////                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") <- 이건 자동으로 문자열 앞에 "ROLE_" 이 추가됨
 //                        .requestMatchers("/api/student/**", "/api/user/**").hasAuthority("USER") // "USER" 역할(role)을 가진 사용자만 허용
                         .requestMatchers("/api/user/**").authenticated() // 토큰 검증이 완료된 사용자만 허용

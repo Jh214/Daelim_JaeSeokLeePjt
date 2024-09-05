@@ -18,6 +18,7 @@ public class SignUpDto {
     private String userName;
     private String userNum;
     private String userDate;
+//    @ApiModel(hidden = true)
     private LocalDateTime userJoin;
     private String userEmail;
     private String schoolName;

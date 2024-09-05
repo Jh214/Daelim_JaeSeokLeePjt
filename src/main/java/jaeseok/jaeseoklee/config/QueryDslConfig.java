@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+//QueryDsl 설정파일
 @Configuration
 @RequiredArgsConstructor
 public class QueryDslConfig {

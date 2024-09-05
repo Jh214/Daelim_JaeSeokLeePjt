@@ -9,6 +9,7 @@ import jaeseok.jaeseoklee.entity.student.Grade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+//JackSon 설정파일 (제이슨 데이터 처리 하는 곳)
 @Configuration
 public class JacksonConfig {
 

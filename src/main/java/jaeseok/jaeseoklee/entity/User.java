@@ -96,7 +96,7 @@ public class User implements UserDetails {
     private List<Student> student;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Messages> messages;
+    private List<Chat> messages;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
