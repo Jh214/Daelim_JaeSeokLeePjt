@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class ScheduleUpdateDto {
     private String subject;
     private String location;

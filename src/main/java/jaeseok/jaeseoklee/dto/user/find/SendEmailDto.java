@@ -9,17 +9,15 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@Getter
-@Setter
 public class SendEmailDto {
-    private String emailAddr;
+    private String userEmail;
     private String userId;
     private int ranCode = (int) (Math.random() * (1000000 - 100000)) + 100000;
     private LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(5);
     private String emailContent;
 
-    public SendEmailDto(String emailAddr, String userId, int ranCode, LocalDateTime timeLimit) {
-        this.emailAddr = emailAddr;
+    public SendEmailDto(String userEmail, String userId, int ranCode, LocalDateTime timeLimit) {
+        this.userEmail = userEmail;
         this.userId = userId;
         this.ranCode = ranCode;
         this.timeLimit = timeLimit;

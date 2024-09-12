@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class StudentAttendanceTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

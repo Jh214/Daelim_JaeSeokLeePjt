@@ -43,14 +43,14 @@ public class FindUserService {
 
 //    비밀번호 찾기 이메일 인증코드 전송
     public ResponseDto<?> sendFindPasswordEmailCode(SendEmailDto mailDto) {
-        Optional<User> userOptional = userRepository.findByUserEmail(mailDto.getEmailAddr());
+        Optional<User> userOptional = userRepository.findByUserEmail(mailDto.getUserEmail());
 
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
         }
 
         User user = userOptional.get();
-        String mailAddr = mailDto.getEmailAddr();
+        String mailAddr = mailDto.getUserEmail();
         String userId = user.getUserId();
 
         if (!user.getUserEmail().equals(mailAddr)) {
@@ -86,8 +86,8 @@ public class FindUserService {
 
 //    이메일 인증코드 검증
     public ResponseDto<?> verificationEmailCode(VerificationCodeDto verCode) {
-        Optional<User> userOptional = userRepository.findByUserEmail(verCode.getEmailAddr());
-        String emailAddr = verCode.getEmailAddr();
+        String emailAddr = verCode.getUserEmail();
+        Optional<User> userOptional = userRepository.findByUserEmail(emailAddr);
         int inputCode = verCode.getInputCode();
 
         SendEmailDto sendEmailDto = codeStore.get(emailAddr);
@@ -159,14 +159,14 @@ public class FindUserService {
 
     //    비밀번호 찾기 이메일 인증코드 전송
     public ResponseDto<?> sendFindUserIdEmailCode(FindUserIdSendEmailDto findUserIdSendEmailDto) {
-        Optional<User> userOptional = userRepository.findByUserEmail(findUserIdSendEmailDto.getEmailAddr());
+        Optional<User> userOptional = userRepository.findByUserEmail(findUserIdSendEmailDto.getUserEmail());
 
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
         }
 
         User user = userOptional.get();
-        String mailAddr = findUserIdSendEmailDto.getEmailAddr();
+        String mailAddr = findUserIdSendEmailDto.getUserEmail();
         String userId = user.getUserId();
 
         if (!user.getUserEmail().equals(mailAddr)) {

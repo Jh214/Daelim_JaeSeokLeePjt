@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.Optional;
 
 @Data
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentFilterDto {

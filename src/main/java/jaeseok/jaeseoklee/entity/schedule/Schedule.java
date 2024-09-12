@@ -9,7 +9,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "schedule")
-@Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

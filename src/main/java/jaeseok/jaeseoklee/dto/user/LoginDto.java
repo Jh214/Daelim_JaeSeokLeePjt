@@ -4,7 +4,6 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-@Getter
 @NoArgsConstructor
 public class LoginDto {
     private String userId;

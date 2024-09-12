@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttendanceViewDto {

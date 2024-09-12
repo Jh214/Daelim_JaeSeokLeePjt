@@ -28,7 +28,7 @@ public class ScheduleController {
         return result;
     }
 
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseDto<?> updateSchedule(@RequestBody ScheduleUpdateDto updateDto) {
         ResponseDto<?> result = scheduleService.update(updateDto);
 

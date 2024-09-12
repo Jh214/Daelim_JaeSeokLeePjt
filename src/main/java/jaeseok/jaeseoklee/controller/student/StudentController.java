@@ -30,7 +30,7 @@ public class StudentController {
         return result;
     }
 
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseDto<?> studentUpdate(@RequestBody StudentUpdateDto studentUpdateDto) {
         ResponseDto<?> result = studentService.updateStudent(studentUpdateDto);
 

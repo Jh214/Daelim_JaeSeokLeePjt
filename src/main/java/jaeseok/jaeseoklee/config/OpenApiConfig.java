@@ -16,6 +16,9 @@ public class OpenApiConfig {
                 .title("JSL 테스트 서버")
                 .description("API Description");
 
+        Server server = new Server();
+        server.setUrl("https://jsl.comon.kr");
+
         return new OpenAPI()
                 .info(info);
     }

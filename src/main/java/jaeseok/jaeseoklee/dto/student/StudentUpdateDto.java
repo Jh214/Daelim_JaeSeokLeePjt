@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@Getter
 @NoArgsConstructor
 public class StudentUpdateDto {
     private String studentName;

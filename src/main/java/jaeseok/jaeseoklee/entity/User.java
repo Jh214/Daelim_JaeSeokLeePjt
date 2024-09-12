@@ -3,6 +3,8 @@ package jaeseok.jaeseoklee.entity;
 import jaeseok.jaeseoklee.dto.user.UpdateDto;
 import jaeseok.jaeseoklee.entity.schedule.Schedule;
 import jaeseok.jaeseoklee.entity.student.Student;
+import jaeseok.jaeseoklee.entity.websocket.Chat;
+import jaeseok.jaeseoklee.entity.websocket.ChatRoomUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -96,10 +98,13 @@ public class User implements UserDetails {
     private List<Student> student;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Chat> messages;
+    private List<Chat> chat;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoomUser> chatRoomUser;
 
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<SeatTable> seatTable;

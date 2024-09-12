@@ -5,7 +5,6 @@ import jaeseok.jaeseoklee.entity.student.Grade;
 import lombok.*;
 
 @Data
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentViewDto {

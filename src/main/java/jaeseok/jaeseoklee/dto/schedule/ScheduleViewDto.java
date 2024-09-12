@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Getter
 @AllArgsConstructor
 public class ScheduleViewDto {
     private String subject;

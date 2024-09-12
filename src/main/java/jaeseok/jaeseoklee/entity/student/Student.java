@@ -14,7 +14,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Table(name = "Student")
 @Entity
-@Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

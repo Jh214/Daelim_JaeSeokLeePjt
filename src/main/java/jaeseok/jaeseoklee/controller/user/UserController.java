@@ -44,7 +44,7 @@ public class UserController {
     }
 
 //    개인정보 변경
-    @PutMapping("/update/{userId}")
+    @PatchMapping("/update/{userId}")
     public ResponseDto<?> update(@PathVariable(name = "userId") String userId,
                                  @RequestBody UpdateDto updateDto,
                                  @RequestHeader("PasswordVerAuth") String token) {
@@ -55,7 +55,7 @@ public class UserController {
     }
 
 //    비밀번호 변경
-    @PutMapping("/updatePassword/{userId}")
+    @PatchMapping("/updatePassword/{userId}")
     public ResponseDto<?> updatePassword(@PathVariable(name = "userId") String userId,
                                          @RequestBody UpdatePasswrodDto updatePasswordDto,
                                          @RequestHeader("PasswordVerAuth") String token) {

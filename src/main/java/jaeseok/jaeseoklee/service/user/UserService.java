@@ -55,6 +55,15 @@ public class UserService {
         if (!password.equals(confirmPassword)) {
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
+        if (userRepository.existsByUserId(userId)) {
+            return ResponseDto.setFailed("이미 등록된 아이디입니다.");
+        }
+        if (userRepository.existsByUserEmail(dto.getUserEmail())) {
+            return ResponseDto.setFailed("이미 등록된 이메일 입니다.");
+        }
+        if (userRepository.existsByUserNum(creationUserNumDash)) {
+            return ResponseDto.setFailed("이미 등록된 전화번호 입니다.");
+        }
 
         // 비밀번호 해싱
         String hashedPassword = bCryptPasswordEncoder.encode(password);
@@ -130,14 +139,15 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
 
 //    이메일 인증코드 검증
     public ResponseDto<?> verificationSignUpEmailCode(VerificationCodeDto verCode) {
-        SendEmailSignUpDto sendEmailSignUpDto = codeStore.get(verCode.getEmailAddr());
+        String mailAddr = verCode.getUserEmail();
+        SendEmailSignUpDto sendEmailSignUpDto = codeStore.get(mailAddr);
 
         if (sendEmailSignUpDto == null) {
             return ResponseDto.setFailed("해당 이메일로 보낸 인증 코드가 없습니다.");
         }
 
         if (LocalDateTime.now().isAfter(sendEmailSignUpDto.getTimeLimit())) {
-            codeStore.remove(verCode.getEmailAddr());  // 5분 지나면 코드 삭제
+            codeStore.remove(mailAddr);  // 5분 지나면 코드 삭제
             return ResponseDto.setFailed("인증 코드가 만료되었습니다. 다시 시도해주세요.");
         }
 
@@ -145,7 +155,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             return ResponseDto.setFailed("인증 코드가 일치하지 않습니다.");
         }
 
-        codeStore.remove(verCode.getEmailAddr()); // 인증 성공 후 코드를 삭제
+        codeStore.remove(mailAddr); // 인증 성공 후 코드를 삭제
         return ResponseDto.setSuccess("인증이 성공적으로 완료되었습니다.");
     }
 

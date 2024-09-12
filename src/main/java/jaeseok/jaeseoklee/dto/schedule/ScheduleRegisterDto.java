@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.internal.build.AllowNonPortable;
 
 @Data
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

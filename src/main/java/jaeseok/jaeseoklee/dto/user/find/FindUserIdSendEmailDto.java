@@ -9,16 +9,14 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@Getter
-@Setter
 public class FindUserIdSendEmailDto {
-    private String emailAddr;
+    private String userEmail;
     private String userId;
     private LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(5);
     private String emailContent;
 
-    public FindUserIdSendEmailDto(String emailAddr, String userId, LocalDateTime timeLimit) {
-        this.emailAddr = emailAddr;
+    public FindUserIdSendEmailDto(String userEmail, String userId, LocalDateTime timeLimit) {
+        this.userEmail = userEmail;
         this.userId = userId;
         this.timeLimit = timeLimit;
         this.emailContent = generateEmailContent();

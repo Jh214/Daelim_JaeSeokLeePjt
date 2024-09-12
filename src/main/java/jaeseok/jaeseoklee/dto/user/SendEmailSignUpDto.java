@@ -5,9 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
-@Getter
 @NoArgsConstructor
-@Setter
 public class SendEmailSignUpDto {
     private String userEmail;
     private int ranCode = (int) (Math.random() * (1000000 - 100000)) + 100000;

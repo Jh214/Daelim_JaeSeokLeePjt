@@ -33,7 +33,7 @@ public class FindUserController {
     }
 
     //    비밀번호 찾기를 통해 이메일 인증이 완료된 사용자에 한하여 비밀번호 변경
-    @PutMapping("/findPassword")
+    @PatchMapping("/findPassword")
     public ResponseDto<?> updatePassword(@RequestBody FindPasswordDto findPasswordDto,
                                          @RequestHeader("EmailVerAuth") String token) {
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;

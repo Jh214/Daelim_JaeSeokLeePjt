@@ -36,7 +36,8 @@ public class SecurityConfig {
             "/api/user/verificationSignUpEmailCode",
             "/api/user/findUserIdByUserEmailCode",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/api/chat/**"
     };
 
     @Bean
