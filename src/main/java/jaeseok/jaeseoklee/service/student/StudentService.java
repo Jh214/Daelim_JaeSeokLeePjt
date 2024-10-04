@@ -29,7 +29,7 @@ public class StudentService {
     private final UserRepository userRepository;
 
     public ResponseDto<?> registerStudent(StudentRegisterDto registerDto) {
-        Optional<User> userOptional = userRepository.findById(registerDto.getUid());
+        Optional<User> userOptional = userRepository.findByUserId(registerDto.getUserId());
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
@@ -43,6 +43,7 @@ public class StudentService {
                 .studentDate(registerDto.getStudentDate())
                 .studentGrade(registerDto.getStudentGrade())
                 .classNum(registerDto.getClassNum())
+                .studentCode(registerDto.getStudentCode())
                 .user(user) // 다대일 연관관계 설정
                 .build();
 
@@ -79,18 +80,20 @@ public class StudentService {
 
     private StudentViewDto convertToDto(Student student) {
         return new StudentViewDto(
+                student.getStudentId(),
                 student.getStudentName(),
                 student.getStudentNum(),
                 student.getStudentGender(),
                 student.getStudentDate(),
                 student.getStudentGrade(),
-                student.getClassNum()
-        );
+                student.getClassNum(),
+                student.getStudentCode()
+                );
     }
 
     public ResponseDto<?> updateStudent(StudentUpdateDto updateDto) {
         // 사용자 ID로 User 객체 조회
-        User user = userRepository.findById(updateDto.getUid())
+        User user = userRepository.findByUserId(updateDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."));
 
         // 학생 ID로 Student 객체 조회

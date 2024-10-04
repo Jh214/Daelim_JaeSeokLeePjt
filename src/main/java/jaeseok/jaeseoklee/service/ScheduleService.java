@@ -9,6 +9,8 @@ import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

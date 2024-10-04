@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class VerificationCodeDto {
     private String userEmail;
     private int inputCode;
+    private String userId;
 }

@@ -54,6 +54,8 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 //    웹소켓
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {
@@ -61,6 +63,7 @@ tasks.named('test') {
 }
 tasks.withType(JavaCompile) {
     options.annotationProcessorPath = configurations.annotationProcessor
+    options.compilerArgs << '-parameters'
 }
 
 compileJava {

@@ -16,5 +16,6 @@ public class StudentRegisterDto {
     private String studentGender;
     private Grade studentGrade;
     private int classNum;
-    private Long uid;
+    private int studentCode;
+    private String userId;
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JWTPasswordVerificationAuthFilter extends OncePerRequestFilter {
+public class JwtPasswordVerificationAuthFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -24,8 +24,8 @@ public class JWTPasswordVerificationAuthFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String token = resolveToken(request);
 
-        log.info("Request URI: " + requestURI);
-        log.info("Token: " + token);
+//        log.info("Request URI: " + requestURI);
+//        log.info("Token: " + token);
 
         // /api/user/update/ 엔드포인트에서만 검증
         if (requestURI.startsWith("/api/user/updatePassword/") &&

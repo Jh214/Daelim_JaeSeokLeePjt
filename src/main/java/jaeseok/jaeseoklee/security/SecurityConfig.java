@@ -37,7 +37,9 @@ public class SecurityConfig {
             "/api/user/findUserIdByUserEmailCode",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/api/chat/**"
+            "/ws/**",
+            "/app/**",
+            "/topic/**"
     };
 
     @Bean
@@ -59,7 +61,7 @@ public class SecurityConfig {
                                 .accessDeniedHandler(accessDeniedHandler()) // 권한이 없는 경우
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTPasswordVerificationAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtPasswordVerificationAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtEmailVerificationAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

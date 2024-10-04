@@ -3,6 +3,7 @@ package jaeseok.jaeseoklee.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jaeseok.jaeseoklee.entity.schedule.DayOfWeek;
 import jaeseok.jaeseoklee.entity.schedule.TimeSlot;
 import jaeseok.jaeseoklee.entity.student.Grade;
@@ -26,6 +27,8 @@ public class JacksonConfig {
 
         mapper.coercionConfigFor(TimeSlot.class)
                 .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
+
+        mapper.registerModule(new JavaTimeModule());
 
         return mapper;
     }

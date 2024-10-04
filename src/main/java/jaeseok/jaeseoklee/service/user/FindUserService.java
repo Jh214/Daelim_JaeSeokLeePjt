@@ -43,7 +43,7 @@ public class FindUserService {
 
 //    비밀번호 찾기 이메일 인증코드 전송
     public ResponseDto<?> sendFindPasswordEmailCode(SendEmailDto mailDto) {
-        Optional<User> userOptional = userRepository.findByUserEmail(mailDto.getUserEmail());
+        Optional<User> userOptional = userRepository.findByUserId(mailDto.getUserId());
 
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
@@ -62,6 +62,7 @@ public class FindUserService {
 
         SendEmailDto newSendEmailDto = new SendEmailDto(mailAddr, userId,ranCode, timeLimit);
         codeStore.put(mailAddr, newSendEmailDto);
+        codeStore.put(userId, newSendEmailDto);
 
         String mailContent = newSendEmailDto.getEmailContent();
 
@@ -87,13 +88,15 @@ public class FindUserService {
 //    이메일 인증코드 검증
     public ResponseDto<?> verificationEmailCode(VerificationCodeDto verCode) {
         String emailAddr = verCode.getUserEmail();
+        String userId = verCode.getUserId();
         Optional<User> userOptional = userRepository.findByUserEmail(emailAddr);
         int inputCode = verCode.getInputCode();
 
         SendEmailDto sendEmailDto = codeStore.get(emailAddr);
+        SendEmailDto sendEmailIdDto = codeStore.get(userId);
 
-        if (sendEmailDto == null) {
-            return ResponseDto.setFailed("해당 이메일로 보낸 인증 코드가 없습니다.");
+        if (sendEmailDto == null || sendEmailIdDto == null) {
+            return ResponseDto.setFailed("해당 아이디가 잘못되었거나 이메일로 보낸 인증 코드가 없습니다.");
         }
 
         if (LocalDateTime.now().isAfter(sendEmailDto.getTimeLimit())) {

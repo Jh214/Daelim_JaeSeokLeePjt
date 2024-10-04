@@ -24,8 +24,8 @@ public class JwtEmailVerificationAuthFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String token = resolveToken(request);
 
-        log.info("Request URI: " + requestURI);
-        log.info("Token: " + token);
+//        log.info("Request URI: " + requestURI);
+//        log.info("Token: " + token);
 
         // /api/user/update/ 엔드포인트에서만 검증
         if (requestURI.startsWith("/api/user/findPassword")) {

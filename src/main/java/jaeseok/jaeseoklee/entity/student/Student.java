@@ -35,6 +35,8 @@ public class Student {
     private Grade studentGrade;
     @Column(nullable = false, name = "classNum")
     private int classNum;
+    @Column(nullable = false, name = "studentCode")
+    private int studentCode;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "uid")
@@ -48,5 +50,6 @@ public class Student {
         this.studentName = updateDto.getStudentName();
         this.studentNum = updateDto.getStudentNum();
         this.studentDate = updateDto.getStudentDate();
+        this.studentCode = updateDto.getStudentCode();
     }
 }

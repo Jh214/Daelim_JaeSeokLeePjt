@@ -159,12 +159,12 @@ public class JwtTokenProvider {
     public Authentication getEmailAuthentication(String accessEmailToken) {
         Claims claims = parseClaims(accessEmailToken);
 
-        // "purpose" 클레임이 없으며 password_verification 라는 값을 가진 purpose 클레임이 아니면 권한이 없다는 예외처리
+        // "purpose" 클레임이 없으며 email_verification 라는 값을 가진 purpose 클레임이 아니면 권한이 없다는 예외처리
         if (claims.get("purpose") == null || !"email_verification".equals(claims.get("purpose"))) {
             throw new RuntimeException("이메일 인증 권한 정보가 없는 토큰입니다.");
         }
 
-        // 비밀번호 검증 토큰은 권한 정보가 필요 없음
+        // 이메일 검증 토큰은 권한 정보가 필요 없음
         Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
 
         // UserDetails 객체를 생성하여 Authentication 반환
@@ -206,7 +206,7 @@ public class JwtTokenProvider {
     public boolean validateEmailVerificationToken(String token) {
         try {
             Claims claims = parseClaims(token);
-            return "email_verification".equals(claims.get("purpose")); // purpose 클레임이 password_verification 을 가지고 있는지 검증
+            return "email_verification".equals(claims.get("purpose")); // purpose 클레임이 email_verification 을 가지고 있는지 검증
         } catch (Exception e) {
             log.info("Invalid Email Verification Token", e);
         }
