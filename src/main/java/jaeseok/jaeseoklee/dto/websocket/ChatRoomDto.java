@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 public class ChatRoomDto {
 
     private Long chatRoomId; // 방 번호
-    private Long masterId;
+    private String masterId;
+    private String participantId;
     private String name;
-    private Long clubId;
 
     @Builder
-    public ChatRoomDto(Long chatRoomId, Long masterId, String name, Long clubId) {
+    public ChatRoomDto(Long chatRoomId, String masterId, String name, String participantId) {
         this.chatRoomId = chatRoomId;
         this.masterId = masterId;
+        this.participantId = participantId;
         this.name = name;
-        this.clubId = clubId;
     }
 }

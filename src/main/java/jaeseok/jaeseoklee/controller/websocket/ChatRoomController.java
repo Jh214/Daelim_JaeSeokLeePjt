@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.controller.websocket;
 
+import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.websocket.ChatRoomDto;
 import jaeseok.jaeseoklee.dto.websocket.RequestChatRoom;
 import jaeseok.jaeseoklee.dto.websocket.ResponseChatRoom;
@@ -18,31 +19,31 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/room")
+@RequestMapping("/api/chat/room")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
     private final Environment env;
 
-    @PostMapping("/")
-    public ResponseEntity<Long> createChatRoom(@RequestBody RequestChatRoom requestChatRoom) {
-        Long chatRoomId = chatRoomService.createChatRoom(requestChatRoom);
+    @PostMapping("/createChatRoom")
+    public ResponseDto<?> createChatRoom(@RequestBody RequestChatRoom requestChatRoom) {
+        ResponseDto<?> result = chatRoomService.createChatRoom(requestChatRoom);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(chatRoomId);
+        return result;
     }
 
-    @GetMapping("/{clubId}")
-    public ResponseEntity<ResponseChatRoom> getChatRoom(@PathVariable("clubId") Long clubId) {
-        ResponseChatRoom responseChatRoom = chatRoomService.getChatRoom(clubId);
+    @GetMapping("/chatInventory/{masterId}")
+    public ResponseDto<?> getChatRoom(@PathVariable("masterId") String masterId) {
+        ResponseDto<?> result = chatRoomService.getChatRoom(masterId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseChatRoom);
+        return result;
     }
 
 
     @DeleteMapping("/delete/{chatRoomId}")
-    public ResponseEntity<Void> deleteChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
-        chatRoomService.deleteChatRoom(chatRoomId);
+    public ResponseDto<?> deleteChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
+        ResponseDto<?> result = chatRoomService.deleteChatRoom(chatRoomId);
 
-        return ResponseEntity.noContent().build();
+        return result;
     }
 }

@@ -15,10 +15,8 @@ public class ResponseChat {
     private Long senderId;
     private String userRealName;
     private String message;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime sendTime;
-    private int page = 0;
-    private int size = 50;
 
     @QueryProjection
     public ResponseChat(Long id, Long chatRoomId, Long senderId, String message, LocalDateTime sendTime, String userRealName) {

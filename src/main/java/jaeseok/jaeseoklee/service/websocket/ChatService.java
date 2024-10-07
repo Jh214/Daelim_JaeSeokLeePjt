@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatDto.getChatRoomId())
                 .orElseThrow(() -> new NoSuchElementException("ChatRoom not found with id: " + chatDto.getChatRoomId()));
 
-        User user = userRepository.findById(chatDto.getSenderId())
+        User user = userRepository.findByUserId(chatDto.getSenderId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + chatDto.getSenderId()));
         log.info("ChatRoomId: {}", chatDto.getChatRoomId());
         log.info("SenderId: {}", chatDto.getSenderId());
@@ -50,7 +51,7 @@ public class ChatService {
         int page = requestChat.getPage();
         int size = requestChat.getSize();
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "sendTime"));
         return chatRepository.getChats(pageable);
     }
 }

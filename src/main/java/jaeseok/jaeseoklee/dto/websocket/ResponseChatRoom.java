@@ -19,9 +19,9 @@ public class ResponseChatRoom {
         this.chatRoomDtoList = chatRoomList.stream()
                 .map(chatRoom -> ChatRoomDto.builder()
                         .chatRoomId(chatRoom.getChatRoomId())
-                        .masterId(chatRoom.getUser().getUid())
+                        .masterId(chatRoom.getCreator().getUserId())
                         .name(chatRoom.getName())
-                        .clubId(chatRoom.getClubId())
+                        .participantId(chatRoom.getParticipant().getUserId())
                         .build())
                 .collect(Collectors.toList());
     }

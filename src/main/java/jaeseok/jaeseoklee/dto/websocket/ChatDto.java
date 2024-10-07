@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 public class ChatDto {
 
     private Long chatRoomId; // 방 번호
-    private Long senderId;
+    private String senderId;
     private String message;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime sendTime;
     private String userRealName;
 

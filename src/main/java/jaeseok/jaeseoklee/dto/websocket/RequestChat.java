@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class RequestChat {
     private Long chatRoomId;
     private int page = 0;
-    private int size = 50;
+    private int size = 30;
 }

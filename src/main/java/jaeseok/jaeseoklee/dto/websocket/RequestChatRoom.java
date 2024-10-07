@@ -14,26 +14,26 @@ import lombok.NoArgsConstructor;
 public class RequestChatRoom {
 
     @NotBlank
-    private Long masterId;
+    private String masterId;
+
+    @NotBlank
+    private String participantId;
 
     @NotBlank
     private String name;
 
-    @NotBlank
-    private Long clubId;
-
     @Builder
-    public RequestChatRoom(Long masterId, String name, Long clubId) {
+    public RequestChatRoom(String masterId, String name, String participantId) {
         this.masterId = masterId;
         this.name = name;
-        this.clubId = clubId;
+        this.participantId = participantId;
     }
 
-    public ChatRoom toEntity(User user) {
+    public ChatRoom toEntity(User creator, User participant) {
         return ChatRoom.builder()
-                .user(user)  // 조회한 User 객체 설정
+                .creator(creator)  // masterId에 해당하는 User 설정
+                .participant(participant)  // participantId에 해당하는 User 설정
                 .name(name)
-                .clubId(clubId)
                 .build();
     }
 }

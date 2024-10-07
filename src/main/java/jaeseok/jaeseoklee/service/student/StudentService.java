@@ -11,7 +11,9 @@ import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -91,31 +93,40 @@ public class StudentService {
                 );
     }
 
-    public ResponseDto<?> updateStudent(StudentUpdateDto updateDto) {
-        // 사용자 ID로 User 객체 조회
-        User user = userRepository.findByUserId(updateDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."));
-
-        // 학생 ID로 Student 객체 조회
-        Student student = studentRepository.findById(updateDto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("학생 정보를 찾을 수 없습니다."));
-
-        // 학생이 해당 유저에 속하는지 확인
-        if (!student.getUser().equals(user)) {
-            return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
-        }
-
-//      JPA 변경감지로 수정
-        student.update(updateDto);
-
-        // 업데이트된 Student 객체 저장
+    public ResponseDto<?> updateStudent(@Valid StudentUpdateDto updateDto) {
         try {
+            // 사용자 ID로 User 객체 조회
+            User user = userRepository.findByUserId(updateDto.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 ID입니다."));
+
+            // 학생 ID로 Student 객체 조회
+            Student student = studentRepository.findById(updateDto.getStudentId())
+                    .orElseThrow(() -> new IllegalArgumentException("학생 정보를 찾을 수 없습니다."));
+
+            // 학생이 해당 유저에 속하는지 확인
+            if (!student.getUser().equals(user)) {
+                return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
+            }
+
+            // JPA 변경감지로 수정
+            student.update(updateDto);
+
+            // 업데이트된 Student 객체 저장
             studentRepository.save(student);
-            return ResponseDto.setSuccess("학생 정보가 수정되었습니다.");
+
+            return ResponseDto.setSuccess("학생 정보가 성공적으로 수정되었습니다.");
+        } catch (IllegalArgumentException e) {
+            // 잘못된 요청에 대한 예외 처리
+            return ResponseDto.setFailed(e.getMessage());
+        } catch (DataAccessException e) {
+            // 데이터베이스 관련 예외 처리
+            return ResponseDto.setFailed("데이터베이스 처리 중 오류가 발생하였습니다.");
         } catch (Exception e) {
-            return ResponseDto.setFailed("데이터베이스 연결에 실패하였습니다.");
+            // 기타 예외 처리
+            return ResponseDto.setFailed("알 수 없는 오류가 발생했습니다.");
         }
     }
+
 
     public ResponseDto<?> deleteStudent(Long studentId) {
         Optional<Student> optionalStudent = studentRepository.findById(studentId);

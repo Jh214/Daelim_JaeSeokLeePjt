@@ -44,6 +44,7 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
                 ))
                 .from(chat)
                 .leftJoin(chat.chatRoom, chatRoom)
+                .orderBy(chat.sendTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
