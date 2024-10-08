@@ -93,7 +93,8 @@ public class UserService {
     }
 
 //    아이디 중복 검사
-    public ResponseDto<?> checkId(String userId) {
+    public ResponseDto<?> checkId(DuplicateDto duplicateDto) {
+        String userId = duplicateDto.getUserId();
         if (userRepository.existsByUserId(userId)) {
             return ResponseDto.setFailed("이미 등록된 아이디입니다.");
         }
@@ -160,8 +161,8 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
 //    전화번호 중복 검사
-    public ResponseDto<?> checkNum(String userNum) {
-        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+    public ResponseDto<?> checkNum(DuplicateDto duplicateDto) {
+        String creationUserNumDash = duplicateDto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
             return ResponseDto.setFailed("이미 등록된 전화번호 입니다.");
         }
@@ -185,7 +186,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
                     userId,
                     null,
                     user.getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
-            JwtTokenDto jwtTokenDto = jwtTokenProvider.generateToken(authentication); // JWT 토큰 생성
+            JwtTokenDto jwtTokenDto = jwtTokenProvider.generateToken(authentication, userId); // JWT 토큰 생성
 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("userName", userName);
@@ -212,7 +213,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
         // JWT 토큰 검증
-        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token, userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
 
@@ -247,7 +248,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
         // JWT 토큰 검증
-        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token, userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
 
@@ -283,7 +284,8 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
 //    현재 비밀번호 검증
-    public ResponseDto<?> confirmPw(String userId, ConfirmPasswordDto confirmPasswordDto) {
+    public ResponseDto<?> confirmPw(ConfirmPasswordDto confirmPasswordDto) {
+        String userId = confirmPasswordDto.getUserId();
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
@@ -299,7 +301,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
                 user.getUserId(),
                 null,
                 userOptional.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
-        JWTConfirmPasswordTokenDto jwtConfirmPasswordTokenDto = jwtTokenProvider.generatePasswordVerificationToken(authentication);
+        JWTConfirmPasswordTokenDto jwtConfirmPasswordTokenDto = jwtTokenProvider.generatePasswordVerificationToken(authentication, userId);
         return ResponseDto.setSuccessData("인증되었습니다", jwtConfirmPasswordTokenDto);
     }
 
@@ -310,7 +312,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
         // JWT 토큰 검증
-        if (!jwtTokenProvider.validatePasswordVerificationToken(token)) {
+        if (!jwtTokenProvider.validatePasswordVerificationToken(token, userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
 

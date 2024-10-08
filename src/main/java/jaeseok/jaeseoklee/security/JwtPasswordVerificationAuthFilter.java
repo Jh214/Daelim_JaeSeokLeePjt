@@ -24,14 +24,16 @@ public class JwtPasswordVerificationAuthFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String token = resolveToken(request);
 
-//        log.info("Request URI: " + requestURI);
-//        log.info("Token: " + token);
+        // 요청에서 userId 추출 (예: URL의 쿼리 파라미터에서 가져올 수 있음)
+        String expectedUserId = request.getParameter("userId"); // userId가 쿼리 파라미터로 전달된다고 가정
 
-        // /api/user/update/ 엔드포인트에서만 검증
-        if (requestURI.startsWith("/api/user/updatePassword/") &&
-                requestURI.startsWith("/api/user/update/") &&
+        // /api/user/updatePassword/, /api/user/update/, /api/user/delete/ 엔드포인트에서만 검증
+        if (requestURI.startsWith("/api/user/updatePassword/") ||
+                requestURI.startsWith("/api/user/update/") ||
                 requestURI.startsWith("/api/user/delete/")) {
-            if (token != null && jwtTokenProvider.validatePasswordVerificationToken(token)) {
+
+            if (token != null && expectedUserId != null &&
+                    jwtTokenProvider.validatePasswordVerificationToken(token, expectedUserId)) {
                 Authentication authentication = jwtTokenProvider.getPwAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
@@ -39,6 +41,7 @@ public class JwtPasswordVerificationAuthFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     // Request Header에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {

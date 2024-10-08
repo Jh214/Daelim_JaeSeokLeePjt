@@ -115,7 +115,7 @@ public class FindUserService {
                 user.getUserId(),
                 null,
                 userOptional.get().getAuthorities()); // 사용자의 id와 비밀번호를 통해 권한정보를 가져옴
-        JWTVerificationEmailCodeDto jwtVerificationEmailCodeDto = jwtTokenProvider.generateEmailCodeVerificationToken(authentication);
+        JWTVerificationEmailCodeDto jwtVerificationEmailCodeDto = jwtTokenProvider.generateEmailCodeVerificationToken(authentication, userId);
 
         codeStore.remove(emailAddr); // 인증 성공 후 코드를 삭제
         return ResponseDto.setSuccessData("인증이 성공적으로 완료되었습니다.", jwtVerificationEmailCodeDto);
@@ -129,7 +129,7 @@ public class FindUserService {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
         // JWT 토큰 검증
-        if (!jwtTokenProvider.validateEmailVerificationToken(token)) {
+        if (!jwtTokenProvider.validateEmailVerificationToken(token, userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
 

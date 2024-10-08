@@ -21,8 +21,8 @@ public class ScheduleController {
         return result;
     }
 
-    @GetMapping("/view/{userId}")
-    public ResponseDto<?> viewSchedule(@PathVariable(name = "userId") String userId) {
+    @GetMapping("/view")
+    public ResponseDto<?> viewSchedule(@RequestParam(name = "userId") String userId) {
         ResponseDto<?> result = scheduleService.view(userId);
 
         return result;

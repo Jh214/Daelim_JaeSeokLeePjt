@@ -2,13 +2,10 @@ package jaeseok.jaeseoklee.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ConfirmPasswordDto {
+public class DuplicateDto {
     private String userId;
-    private String userPw;
+    private String userNum;
 }

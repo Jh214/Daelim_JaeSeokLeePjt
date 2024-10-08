@@ -37,15 +37,15 @@ public class UserController {
     }
 
 //    비밀번호 인증
-    @PostMapping("/confirmPassword/{userId}")
-    public ResponseDto<?> confirmPassowrd(@PathVariable(name = "userId") String userId, @RequestBody ConfirmPasswordDto confirmPasswordDto) {
-        ResponseDto<?> result = userService.confirmPw(userId, confirmPasswordDto);
+    @PostMapping("/confirmPassword")
+    public ResponseDto<?> confirmPassowrd(@RequestBody ConfirmPasswordDto confirmPasswordDto) {
+        ResponseDto<?> result = userService.confirmPw(confirmPasswordDto);
         return result;
     }
 
 //    개인정보 변경
-    @PatchMapping("/update/{userId}")
-    public ResponseDto<?> update(@PathVariable(name = "userId") String userId,
+    @PatchMapping("/update")
+    public ResponseDto<?> update(@RequestParam(name = "userId") String userId,
                                  @RequestBody UpdateDto updateDto,
                                  @RequestHeader("PasswordVerAuth") String token) {
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
@@ -55,8 +55,8 @@ public class UserController {
     }
 
 //    비밀번호 변경
-    @PatchMapping("/updatePassword/{userId}")
-    public ResponseDto<?> updatePassword(@PathVariable(name = "userId") String userId,
+    @PatchMapping("/updatePassword")
+    public ResponseDto<?> updatePassword(@RequestParam(name = "userId") String userId,
                                          @RequestBody UpdatePasswrodDto updatePasswordDto,
                                          @RequestHeader("PasswordVerAuth") String token) {
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
@@ -66,8 +66,8 @@ public class UserController {
     }
 
 //    회원탈퇴
-    @DeleteMapping("/delete/{userId}")
-    public ResponseDto<?> delete(@PathVariable(name = "userId") String userId,
+    @DeleteMapping("/delete")
+    public ResponseDto<?> delete(@RequestParam(name = "userId") String userId,
                                  @RequestHeader("PasswordVerAuth") String token) {
 
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
@@ -84,9 +84,9 @@ public class UserController {
     }
 
 //    아이디 중복 검사
-    @PostMapping("/checkId/{userId}")
-    public ResponseDto<?> CheckId(@PathVariable(name = "userId") String userId) {
-        ResponseDto<?> result = userService.checkId(userId);
+    @PostMapping("/checkId")
+    public ResponseDto<?> CheckId(@RequestBody DuplicateDto duplicateDto) {
+        ResponseDto<?> result = userService.checkId(duplicateDto);
 
         return result;
     }
@@ -108,9 +108,9 @@ public class UserController {
     }
 
 //    전화번호 중복검사
-    @PostMapping("/checkNum/{CheckNum}")
-    public ResponseDto<?> CheckNum(@PathVariable(name = "CheckNum") String CheckNum) {
-        ResponseDto<?> result = userService.checkNum(CheckNum);
+    @PostMapping("/checkNum")
+    public ResponseDto<?> CheckNum(@RequestBody DuplicateDto duplicateDto) {
+        ResponseDto<?> result = userService.checkNum(duplicateDto);
 
         return result;
     }

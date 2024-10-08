@@ -38,7 +38,7 @@ public class JwtTokenProvider {
     }
 
     // User 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public JwtTokenDto generateToken(Authentication authentication) {
+    public JwtTokenDto generateToken(Authentication authentication, String userId) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -51,6 +51,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // 인증된 사용자로 토큰의 대상 지정
                 .claim("auth", authorities) // 클레임 설정
+                .claim("userId", userId)
                 .setExpiration(accessTokenExpiresIn) // 토큰 만료시간 설정
                 .signWith(key, SignatureAlgorithm.HS256) // secretKey 와 HS256알고리즘으로 토큰 서명
                 .compact(); // accessToken 설정을 마치고 JWT 토큰을 문자열로 반환
@@ -69,7 +70,7 @@ public class JwtTokenProvider {
     }
 
 //    비밀번호 검증을 위한 토큰 생성 메서드
-    public JWTConfirmPasswordTokenDto generatePasswordVerificationToken(Authentication authentication) {
+    public JWTConfirmPasswordTokenDto generatePasswordVerificationToken(Authentication authentication, String userId) {
         // 인증된 사용자의 정보 가져오기
         String username = authentication.getName();
 
@@ -84,6 +85,7 @@ public class JwtTokenProvider {
         String passwordVerificationToken = Jwts.builder()
                 .setSubject(username)
                 .claim("purpose", "password_verification") // purpose 클레임이 password_verification 을 포함함
+                .claim("userId", userId)
                 .setExpiration(tokenExpirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact(); //
@@ -94,7 +96,7 @@ public class JwtTokenProvider {
                 .build();
     }
 //  이메일 인증 검증을 위한 토큰 생성 메서드
-    public JWTVerificationEmailCodeDto generateEmailCodeVerificationToken(Authentication authentication) {
+    public JWTVerificationEmailCodeDto generateEmailCodeVerificationToken(Authentication authentication, String userId) {
         // 인증된 사용자의 정보 가져오기
         String username = authentication.getName();
 
@@ -109,6 +111,7 @@ public class JwtTokenProvider {
         String emailCodeVerificationToken = Jwts.builder()
                 .setSubject(username)
                 .claim("purpose", "email_verification") // purpose 클레임이 email_verification 을 포함함
+                .claim("userId", userId)
                 .setExpiration(tokenExpirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact(); //
@@ -129,16 +132,20 @@ public class JwtTokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
+        // userId 클레임 추출
+        String userId = claims.getSubject();  // claims.get("sub", String.class);
+        log.info("Extracted userId: " + userId);
+
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication return
-        // UserDetails: interface, User: UserDetails를 구현한 class
         UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
+
 
     public Authentication getPwAuthentication(String accessPwToken) {
         Claims claims = parseClaims(accessPwToken);
@@ -147,6 +154,9 @@ public class JwtTokenProvider {
         if (claims.get("purpose") == null || !"password_verification".equals(claims.get("purpose"))) {
             throw new RuntimeException("비밀번호 검증 권한 정보가 없는 토큰입니다.");
         }
+
+        String userId = claims.getSubject();  // claims.get("sub", String.class);
+        log.info("Extracted userId: " + userId);
 
         // 비밀번호 검증 토큰은 권한 정보가 필요 없음
         Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
@@ -164,6 +174,9 @@ public class JwtTokenProvider {
             throw new RuntimeException("이메일 인증 권한 정보가 없는 토큰입니다.");
         }
 
+        String userId = claims.getSubject();  // claims.get("sub", String.class);
+        log.info("Extracted userId: " + userId);
+
         // 이메일 검증 토큰은 권한 정보가 필요 없음
         Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
 
@@ -173,14 +186,14 @@ public class JwtTokenProvider {
     }
 
 
-    // 토큰 정보를 검증하는 메서드
-    public boolean validateToken(String token) {
+    public Claims validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key) // 서명을 검증할 secretKey 를 가져옴
                     .build()
-                    .parseClaimsJws(token); // 서명을 검증하고 클레임 추출
-            return true;
+                    .parseClaimsJws(token) // 서명을 검증하고 클레임 추출
+                    .getBody(); // Claims 반환
+            return claims; // 클레임 반환
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
@@ -190,23 +203,34 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
         }
-        return false;
+        return null; // 클레임이 유효하지 않을 경우 null 반환
     }
 
-    public boolean validatePasswordVerificationToken(String token) {
+
+    public boolean validatePasswordVerificationToken(String token, String expectedUserId) {
         try {
             Claims claims = parseClaims(token);
-            return "password_verification".equals(claims.get("purpose")); // purpose 클레임이 password_verification 을 가지고 있는지 검증
+            boolean isValidPurpose = "password_verification".equals(claims.get("purpose")); // purpose 클레임 검증
+            String tokenUserId = claims.getSubject();
+
+            boolean isUserIdValid = expectedUserId.equals(tokenUserId);
+
+            return isValidPurpose && isUserIdValid;// purpose 클레임이 password_verification 을 가지고 있는지, userId가 같은지 검증
         } catch (Exception e) {
             log.info("Invalid Password Verification Token", e);
         }
         return false;
     }
 
-    public boolean validateEmailVerificationToken(String token) {
+    public boolean validateEmailVerificationToken(String token, String expectedUserId) {
         try {
             Claims claims = parseClaims(token);
-            return "email_verification".equals(claims.get("purpose")); // purpose 클레임이 email_verification 을 가지고 있는지 검증
+            boolean isValidPurpose = "email_verification".equals(claims.get("purpose"));
+            String tokenUserId = claims.getSubject();
+
+            boolean isUserIdValid = expectedUserId.equals(tokenUserId);
+
+            return isValidPurpose && isUserIdValid;  // purpose 클레임이 email_verification 을 가지고 있는지, userId가 같은지 검증
         } catch (Exception e) {
             log.info("Invalid Email Verification Token", e);
         }
