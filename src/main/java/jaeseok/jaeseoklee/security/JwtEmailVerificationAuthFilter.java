@@ -59,11 +59,22 @@ public class JwtEmailVerificationAuthFilter extends OncePerRequestFilter {
                     jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
                     log.info("jsonUserId = " + jsonUserId);
                 }
+
+                String requestUserId = request.getParameter("user_id");
+                log.info("paramUserId = " + requestUserId);
+
                 String tokenUserId = claims.getSubject();
                 // 토큰 검증
                 if (jwtTokenProvider.validateEmailVerificationToken(token, jsonUserId)) {
                     Authentication authentication = jwtTokenProvider.getEmailAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+                // requestUserId가 null이 아닐 때만 검증
+                if (requestUserId != null && !requestUserId.equals(tokenUserId)) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden 상태 코드 설정
+                    response.setContentType("application/json; charset=UTF-8"); // 응답 형식 JSON
+                    response.getWriter().write("{\"error\":\"권한이 없는 사용자입니다.\"}"); // JSON 형식으로 응답 내용 작성
+                    return; // 필터 체인의 다음 단계로 진행하지 않도록 return
                 }
 
                 // jsonUserId가 null이 아닐 때만 검증
