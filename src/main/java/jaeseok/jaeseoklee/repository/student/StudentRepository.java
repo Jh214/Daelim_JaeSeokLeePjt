@@ -13,4 +13,8 @@ public interface StudentRepository extends JpaRepository<Student, Long>, Student
     @Query("SELECT s FROM Student s WHERE s.user.userId = :userId")
     Page<Student> findByUserId(@Param("userId") String userId, Pageable pageable);
 
+    boolean existsByStudentNum(@Param("studentNum") String studentNum);
+
+    boolean existsByStudentCode(@Param("studentCode") int studentCode);
+
 }

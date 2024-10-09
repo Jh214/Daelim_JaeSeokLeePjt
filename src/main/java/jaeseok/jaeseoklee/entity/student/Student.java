@@ -49,7 +49,6 @@ public class Student {
     public void update(StudentUpdateDto updateDto) {
         this.studentName = updateDto.getStudentName();
         this.studentNum = updateDto.getStudentNum();
-        this.studentDate = updateDto.getStudentDate();
         this.studentCode = updateDto.getStudentCode();
     }
 }

@@ -35,6 +35,16 @@ public class StudentService {
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
+        int studentCode = registerDto.getStudentCode();
+        String studentNum = registerDto.getStudentNum();
+
+        if (studentRepository.existsByStudentNum(studentNum)) {
+            return ResponseDto.setFailed("이미 등록된 학생 전화번호입니다.");
+        }
+
+        if (studentRepository.existsByStudentCode(studentCode)) {
+            return ResponseDto.setFailed("이미 등록된 학생 번호입니다.");
+        }
 
         User user = userOptional.get();
 
@@ -106,6 +116,13 @@ public class StudentService {
             // 학생이 해당 유저에 속하는지 확인
             if (!student.getUser().equals(user)) {
                 return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
+            }
+            if (studentRepository.existsByStudentNum(updateDto.getStudentNum())) {
+                return ResponseDto.setFailed("이미 등록된 학생 전화번호입니다.");
+            }
+
+            if (studentRepository.existsByStudentCode(updateDto.getStudentCode())) {
+                return ResponseDto.setFailed("이미 등록된 학생 번호입니다.");
             }
 
             // JPA 변경감지로 수정

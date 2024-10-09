@@ -93,8 +93,7 @@ public class UserService {
     }
 
 //    아이디 중복 검사
-    public ResponseDto<?> checkId(DuplicateDto duplicateDto) {
-        String userId = duplicateDto.getUserId();
+    public ResponseDto<?> checkId(String userId) {
         if (userRepository.existsByUserId(userId)) {
             return ResponseDto.setFailed("이미 등록된 아이디입니다.");
         }
@@ -161,8 +160,8 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
 //    전화번호 중복 검사
-    public ResponseDto<?> checkNum(DuplicateDto duplicateDto) {
-        String creationUserNumDash = duplicateDto.getUserNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+    public ResponseDto<?> checkNum(String userNum) {
+        String creationUserNumDash = userNum.replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         if (userRepository.existsByUserNum(creationUserNumDash)) {
             return ResponseDto.setFailed("이미 등록된 전화번호 입니다.");
         }

@@ -85,8 +85,8 @@ public class UserController {
 
 //    아이디 중복 검사
     @PostMapping("/checkId")
-    public ResponseDto<?> CheckId(@RequestBody DuplicateDto duplicateDto) {
-        ResponseDto<?> result = userService.checkId(duplicateDto);
+    public ResponseDto<?> CheckId(@RequestBody String userId) {
+        ResponseDto<?> result = userService.checkId(userId);
 
         return result;
     }
@@ -109,8 +109,8 @@ public class UserController {
 
 //    전화번호 중복검사
     @PostMapping("/checkNum")
-    public ResponseDto<?> CheckNum(@RequestBody DuplicateDto duplicateDto) {
-        ResponseDto<?> result = userService.checkNum(duplicateDto);
+    public ResponseDto<?> CheckNum(@RequestBody String userNum) {
+        ResponseDto<?> result = userService.checkNum(userNum);
 
         return result;
     }
