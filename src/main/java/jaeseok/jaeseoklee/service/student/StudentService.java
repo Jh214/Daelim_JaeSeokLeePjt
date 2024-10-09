@@ -31,18 +31,19 @@ public class StudentService {
     private final UserRepository userRepository;
 
     public ResponseDto<?> registerStudent(StudentRegisterDto registerDto) {
-        Optional<User> userOptional = userRepository.findByUserId(registerDto.getUserId());
+        String userId = registerDto.getUserId();
+        Optional<User> userOptional = userRepository.findByUserId(userId);
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
         int studentCode = registerDto.getStudentCode();
         String studentNum = registerDto.getStudentNum();
 
-        if (studentRepository.existsByStudentNum(studentNum)) {
+        if (studentRepository.existsByStudentNumAndUser_UserId(studentNum, userId)) {
             return ResponseDto.setFailed("이미 등록된 학생 전화번호입니다.");
         }
 
-        if (studentRepository.existsByStudentCode(studentCode)) {
+        if (studentRepository.existsByStudentCodeAndUser_UserId(studentCode, userId)) {
             return ResponseDto.setFailed("이미 등록된 학생 번호입니다.");
         }
 
@@ -104,9 +105,13 @@ public class StudentService {
     }
 
     public ResponseDto<?> updateStudent(@Valid StudentUpdateDto updateDto) {
+        String userId = updateDto.getUserId();
+        int studentCode = updateDto.getStudentCode();
+        String studentNum = updateDto.getStudentNum();
+        Long studentId = updateDto.getStudentId();
         try {
             // 사용자 ID로 User 객체 조회
-            User user = userRepository.findByUserId(updateDto.getUserId())
+            User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 ID입니다."));
 
             // 학생 ID로 Student 객체 조회
@@ -117,11 +122,11 @@ public class StudentService {
             if (!student.getUser().equals(user)) {
                 return ResponseDto.setFailed("해당 유저의 학생이 아닙니다.");
             }
-            if (studentRepository.existsByStudentNum(updateDto.getStudentNum())) {
+            if (studentRepository.existsByStudentNumAndUser_UserIdAndStudentIdNot(studentNum, userId, studentId)) {
                 return ResponseDto.setFailed("이미 등록된 학생 전화번호입니다.");
             }
 
-            if (studentRepository.existsByStudentCode(updateDto.getStudentCode())) {
+            if (studentRepository.existsByStudentCodeAndUser_UserIdAndStudentIdNot(studentCode, userId, studentId)) {
                 return ResponseDto.setFailed("이미 등록된 학생 번호입니다.");
             }
 
