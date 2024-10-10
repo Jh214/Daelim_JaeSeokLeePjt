@@ -69,8 +69,9 @@ public class StudentService {
         String userId = studentFilterDto.getUserId();
         int page = studentFilterDto.getPage();
         int size = studentFilterDto.getSize();
+        Optional<User> userOptional = userRepository.findByUserId(userId);
 
-        if (userId == null || userId.isEmpty()) {
+        if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
         Pageable pageable = PageRequest.of(page, size);

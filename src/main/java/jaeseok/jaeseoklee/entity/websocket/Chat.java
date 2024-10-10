@@ -3,7 +3,10 @@ package jaeseok.jaeseoklee.entity.websocket;
 import jaeseok.jaeseoklee.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +28,7 @@ public class Chat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(name = "message")

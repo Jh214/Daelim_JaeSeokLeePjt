@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         // /api/user/findPassword/, /api/user/signup/ 엔드포인트에서는 검증 안함
-        if (!requestURI.startsWith("/api/user/findPassword/")) {
+        if (!requestURI.startsWith("/api/user/findPassword/") && !requestURI.startsWith("/api/user/checkNum")) {
             log.info("requestURI = " + requestURI);
             // 2. validateToken 으로 토큰 유효성 검사
             Claims claims = jwtTokenProvider.validateToken(token);
@@ -61,7 +61,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 요청 본문이 비어 있지 않은 경우에만 JSON 검증 수행
                 if (!requestBody.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {});
+                    Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {
+                    });
                     log.info("request Data = " + requestData.toString());
 
                     jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
@@ -70,33 +71,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String requestUserId = null;
                 // 요청 본문이 비어 있을 때만 쿼리 파라미터에서 userId를 가져옴
-//                if (requestBody.isEmpty()) {
-                    requestUserId = request.getParameter("user_id");
+                if (requestBody.isEmpty()) {
+                    requestUserId = request.getParameter("userId");
                     log.info("paramUserId = " + requestUserId);
-//                }
-
-                // tokenUserId는 항상 추출
-                String tokenUserId = claims.getSubject(); // 토큰에서 userId 가져오기
-
-                // requestUserId가 null이 아닐 때만 검증
-                if (requestUserId != null && !requestUserId.equals(tokenUserId)) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden 상태 코드 설정
-                    response.setContentType("application/json; charset=UTF-8"); // 응답 형식 JSON
-                    response.getWriter().write("{\"error\":\"권한이 없는 사용자입니다.\"}"); // JSON 형식으로 응답 내용 작성
-                    return; // 필터 체인의 다음 단계로 진행하지 않도록 return
                 }
 
-                // jsonUserId가 null이 아닐 때만 검증
-                if (jsonUserId != null && !jsonUserId.equals(tokenUserId)) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden 상태 코드 설정
-                    response.setContentType("application/json; charset=UTF-8"); // 응답 형식 JSON
-                    response.getWriter().write("{\"error\":\"권한이 없는 사용자입니다.\"}"); // JSON 형식으로 응답 내용 작성
-                    return; // 필터 체인의 다음 단계로 진행하지 않도록 return
+                    // tokenUserId는 항상 추출
+                    String tokenUserId = claims.getSubject(); // 토큰에서 userId 가져오기
+
+                    // requestUserId가 null이 아닐 때만 검증
+                    if (requestUserId != null && !requestUserId.equals(tokenUserId)) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden 상태 코드 설정
+                        response.setContentType("application/json; charset=UTF-8"); // 응답 형식 JSON
+                        response.getWriter().write("{\"error\":\"권한이 없는 사용자입니다.\"}"); // JSON 형식으로 응답 내용 작성
+                        return; // 필터 체인의 다음 단계로 진행하지 않도록 return
+                    }
+
+                    // jsonUserId가 null이 아닐 때만 검증
+                    if (jsonUserId != null && !jsonUserId.equals(tokenUserId)) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden 상태 코드 설정
+                        response.setContentType("application/json; charset=UTF-8"); // 응답 형식 JSON
+                        response.getWriter().write("{\"error\":\"권한이 없는 사용자입니다.\"}"); // JSON 형식으로 응답 내용 작성
+                        return; // 필터 체인의 다음 단계로 진행하지 않도록 return
+                    }
                 }
             }
+            filterChain.doFilter(wrappedRequest, response);
         }
-        filterChain.doFilter(wrappedRequest, response);
-    }
+
 
 
     // Request Header 에서 토큰 정보 추출

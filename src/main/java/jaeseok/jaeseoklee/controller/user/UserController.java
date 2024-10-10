@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
+import jaeseok.jaeseoklee.dto.user.sms.SendKakao;
+import jaeseok.jaeseoklee.dto.user.sms.VerificationSmsCode;
+import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
 import jaeseok.jaeseoklee.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    SMS_KAKAO_Service smsKakaoService;
 
 //    회원가입
     @PostMapping("/signup")
@@ -68,11 +73,12 @@ public class UserController {
 //    회원탈퇴
     @DeleteMapping("/delete")
     public ResponseDto<?> delete(@RequestParam(name = "userId") String userId,
-                                 @RequestHeader("PasswordVerAuth") String token) {
+                                 @RequestHeader("PasswordVerAuth") String token,
+                                 @RequestBody UserPwDto userPwDto) {
 
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-        ResponseDto<?> result = userService.delete(userId, jwtToken);
+        ResponseDto<?> result = userService.delete(userId, jwtToken, userPwDto);
         return result;
     }
 
@@ -85,32 +91,30 @@ public class UserController {
 
 //    아이디 중복 검사
     @PostMapping("/checkId")
-    public ResponseDto<?> CheckId(@RequestBody String userId) {
-        ResponseDto<?> result = userService.checkId(userId);
+    public ResponseDto<?> CheckId(@RequestBody UserIdDto userIdDto) {
+        ResponseDto<?> result = userService.checkId(userIdDto);
 
         return result;
     }
 
 //    이메일 중복 검사
     @PostMapping("/checkEmail")
-    public ResponseDto<?> CheckEmail(@RequestBody SendEmailSignUpDto emailSignUpDto) {
-        ResponseDto<?> result = userService.checkEmail(emailSignUpDto);
-
-        return result;
-    }
-
-    @PostMapping("/verificationSignUpEmailCode")
-    public ResponseDto<?> verSignUpCode(@RequestBody VerificationCodeDto verCodeDto){
-
-        ResponseDto<?> result = userService.verificationSignUpEmailCode(verCodeDto);
+    public ResponseDto<?> CheckEmail(@RequestBody UserEmailDto mailDto) {
+        ResponseDto<?> result = userService.checkEmail(mailDto);
 
         return result;
     }
 
 //    전화번호 중복검사
     @PostMapping("/checkNum")
-    public ResponseDto<?> CheckNum(@RequestBody String userNum) {
-        ResponseDto<?> result = userService.checkNum(userNum);
+    public ResponseDto<?> CheckNum(@RequestBody SendKakao sendKakao) {
+        ResponseDto<?> result = smsKakaoService.validateAndSendKakao(sendKakao);
+
+        return result;
+    }
+    @PostMapping("/verificationSignUpSmsCode")
+    public ResponseDto<?> verSignUpSmsCode(@RequestBody VerificationSmsCode verCodeDto) {
+        ResponseDto<?> result = smsKakaoService.verificationKakaoCode(verCodeDto);
 
         return result;
     }

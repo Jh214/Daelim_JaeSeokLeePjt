@@ -14,7 +14,7 @@ public class StudentAttendanceController {
     private final StudentAttendanceService studentAttendanceService;
 
     @GetMapping("/view")
-    public ResponseDto<?> viewStudentAttendance(@ModelAttribute StudentFilterDto filterDto) {
+    public ResponseDto<?> viewStudentAttendance(@RequestBody StudentFilterDto filterDto) {
         ResponseDto<?> result = studentAttendanceService.view(filterDto);
 
         return result;

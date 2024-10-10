@@ -34,9 +34,7 @@ public class ScheduleService {
 
         Schedule schedule = Schedule.builder()
                 .subject(registerDto.getSubject())
-                .location(registerDto.getLocation())
-                .startTime(registerDto.getStartTime())
-                .endTime(registerDto.getEndTime())
+                .period(registerDto.getPeriod())
                 .dayOfWeek(registerDto.getDayOfWeek())
                 .user(user)
                 .build();
@@ -62,9 +60,7 @@ public class ScheduleService {
     private ScheduleViewDto convertToDto(Schedule schedule) {
         return new ScheduleViewDto(
                 schedule.getSubject(),
-                schedule.getLocation(),
-                schedule.getStartTime(),
-                schedule.getEndTime(),
+                schedule.getPeriod(),
                 schedule.getDayOfWeek()
         );
     }

@@ -1,10 +1,7 @@
 package jaeseok.jaeseoklee.dto.student;
 
 import jaeseok.jaeseoklee.entity.student.Grade;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Optional;
 

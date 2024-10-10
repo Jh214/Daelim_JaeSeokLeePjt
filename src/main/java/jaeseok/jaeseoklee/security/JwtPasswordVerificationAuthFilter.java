@@ -35,8 +35,8 @@ public class JwtPasswordVerificationAuthFilter extends OncePerRequestFilter {
 
         // /api/user/updatePassword/, /api/user/update/, /api/user/delete/ 엔드포인트에서만 검증
         if (requestURI.startsWith("/api/user/updatePassword/") ||
-                requestURI.startsWith("/api/user/update/") ||
-                requestURI.startsWith("/api/user/delete/")) {
+                requestURI.startsWith("/api/user/update/")/* ||
+                requestURI.startsWith("/api/user/delete/")*/) {
             Claims claims = jwtTokenProvider.validateToken(token);
             StringBuilder jsonBuilder = new StringBuilder();
             String line;

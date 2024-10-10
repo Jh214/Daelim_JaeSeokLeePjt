@@ -4,13 +4,16 @@ import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentViewDto;
 import jaeseok.jaeseoklee.dto.student.attendance.AttendanceViewDto;
+import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.entity.student.Attendance;
 import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.student.StudentAttendanceTable;
+import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.repository.student.StudentAttendanceTableRepository;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,16 +26,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class StudentAttendanceService {
     private final StudentRepository studentRepository;
     private final StudentAttendanceTableRepository studentAttendanceTableRepository;
+    private final UserRepository userRepository;
 
     public ResponseDto<?> view(StudentFilterDto filterDto){
         String userId = filterDto.getUserId();
         int page = filterDto.getPage();
         int size = filterDto.getSize();
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        log.info(userId);
 
-        if (userId == null || userId.isEmpty()) {
+        if (!optionalUser.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
         Pageable pageable = PageRequest.of(page, size);
