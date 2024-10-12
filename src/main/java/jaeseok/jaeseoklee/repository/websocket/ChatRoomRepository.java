@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-    @Query("SELECT cr FROM ChatRoom cr WHERE cr.creator.userId = :masterId")
-    List<ChatRoom> findByUserId(@Param("masterId") String masterId);
+    @Query("SELECT cr FROM ChatRoom cr WHERE cr.creator.userId = :userId OR cr.participant.userId = :userId")
+    List<ChatRoom> findByUserId(@Param("userId") String userId);
+
 }

@@ -43,9 +43,9 @@ public class ChatRoomService {
         return ResponseDto.setSuccess("채팅방이 생성되었습니다.");
     }
 
-    public ResponseDto<?> getChatRoom(String masterId) {
+    public ResponseDto<?> getChatRoom(String userId) {
         // masterId로 로그인된 유저가 소속된 채팅방 목록 조회
-        List<ChatRoom> chatRoomList = chatRoomRepository.findByUserId(masterId);
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByUserId(userId);
 
         // 조회된 채팅방 목록을 ResponseChatRoom 객체로 변환
         ResponseChatRoom responseChatRoom = ResponseChatRoom.builder()

@@ -198,6 +198,6 @@ public class FindUserService {
             return ResponseDto.setFailed("메일 전송에 실패하였습니다. 다시 시도해주세요.");
         }
 
-        return ResponseDto.setSuccess("메일이 전송되었습니다.");
+        return ResponseDto.setSuccess("메일 확인 후 로그인을 계속해주세요.");
     }
 }

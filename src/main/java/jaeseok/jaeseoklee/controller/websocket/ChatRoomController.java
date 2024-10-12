@@ -32,16 +32,15 @@ public class ChatRoomController {
         return result;
     }
 
-    @GetMapping("/chatInventory/{masterId}")
-    public ResponseDto<?> getChatRoom(@PathVariable("masterId") String masterId) {
-        ResponseDto<?> result = chatRoomService.getChatRoom(masterId);
+    @GetMapping("/chatInventory")
+    public ResponseDto<?> getChatRoom(@RequestParam(name = "userId") String userId) {
+        ResponseDto<?> result = chatRoomService.getChatRoom(userId);
 
         return result;
     }
 
-
-    @DeleteMapping("/delete/{chatRoomId}")
-    public ResponseDto<?> deleteChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
+    @DeleteMapping("/delete")
+    public ResponseDto<?> deleteChatRoom(@RequestParam(name = "chatRoomId") Long chatRoomId) {
         ResponseDto<?> result = chatRoomService.deleteChatRoom(chatRoomId);
 
         return result;
