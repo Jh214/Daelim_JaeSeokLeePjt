@@ -40,7 +40,10 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/ws/**",
             "/app/**",
-            "/topic/**"
+            "/topic/**",
+            "/api/user/findUserIdBySmsCode",
+            "/api/user/sendKakao",
+            "/api/user/userPwVerificationSmsCode"
     };
 
     @Bean

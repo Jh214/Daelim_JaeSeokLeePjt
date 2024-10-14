@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jaeseok.jaeseoklee.entity.schedule.DayOfWeek;
-import jaeseok.jaeseoklee.entity.schedule.TimeSlot;
 import jaeseok.jaeseoklee.entity.student.Grade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +24,6 @@ public class JacksonConfig {
         mapper.coercionConfigFor(DayOfWeek.class)
                 .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
 
-        mapper.coercionConfigFor(TimeSlot.class)
-                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
 
         mapper.registerModule(new JavaTimeModule());
 

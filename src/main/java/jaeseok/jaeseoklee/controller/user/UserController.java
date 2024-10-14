@@ -3,8 +3,7 @@ package jaeseok.jaeseoklee.controller.user;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
-import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
-import jaeseok.jaeseoklee.dto.user.sms.SendKakao;
+import jaeseok.jaeseoklee.dto.user.sms.ValidatePhoneNumAndSendKakao;
 import jaeseok.jaeseoklee.dto.user.sms.VerificationSmsCode;
 import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
 import jaeseok.jaeseoklee.service.user.UserService;
@@ -107,7 +106,7 @@ public class UserController {
 
 //    전화번호 중복검사
     @PostMapping("/checkNum")
-    public ResponseDto<?> CheckNum(@RequestBody SendKakao sendKakao) {
+    public ResponseDto<?> CheckNum(@RequestBody ValidatePhoneNumAndSendKakao sendKakao) {
         ResponseDto<?> result = smsKakaoService.validateAndSendKakao(sendKakao);
 
         return result;

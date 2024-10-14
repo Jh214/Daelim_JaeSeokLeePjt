@@ -1,11 +1,10 @@
 package jaeseok.jaeseoklee.controller.user;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
-import jaeseok.jaeseoklee.dto.user.find.FindPasswordDto;
-import jaeseok.jaeseoklee.dto.user.find.FindUserIdSendEmailDto;
-import jaeseok.jaeseoklee.dto.user.find.SendEmailDto;
-import jaeseok.jaeseoklee.dto.user.find.VerificationCodeDto;
+import jaeseok.jaeseoklee.dto.user.find.*;
+import jaeseok.jaeseoklee.dto.user.sms.ValidatePhoneNumAndSendKakao;
 import jaeseok.jaeseoklee.service.user.FindUserService;
+import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 public class FindUserController {
     @Autowired
     FindUserService findUserService;
+    @Autowired
+    SMS_KAKAO_Service smsKakaoService;
 
     //    인증메일 보내기
     @PostMapping("/sendEmail")
@@ -45,6 +46,27 @@ public class FindUserController {
     @PostMapping("/findUserIdByUserEmailCode")
     public ResponseDto<?> findUserIdByUserEmailCode(@RequestBody FindUserIdSendEmailDto findUserIdSendEmailDto) {
         ResponseDto<?> result = findUserService.sendFindUserIdEmailCode(findUserIdSendEmailDto);
+
+        return result;
+    }
+
+    @PostMapping("/findUserIdBySmsCode")
+    public ResponseDto<?> findUserIdBySmsCode(@RequestBody FindUserIdBySmsCodeSend smsCodeSend) {
+        ResponseDto<?> result = smsKakaoService.FindUserIdSendKakao(smsCodeSend);
+
+        return result;
+    }
+
+    @PostMapping("/sendKakao")
+    public ResponseDto<?> sendEmail(@RequestBody FindUserPasswordByUserNum sendKakao) {
+        ResponseDto<?> result = smsKakaoService.sendKakao(sendKakao);
+
+        return result;
+    }
+
+    @PostMapping("/userPwVerificationSmsCode")
+    public ResponseDto<?> userPwVerSmsCode(@RequestBody VerificationPwSmsCode verSmsCode) {
+        ResponseDto<?> result = smsKakaoService.findPwVerificationKakaoCode(verSmsCode);
 
         return result;
     }

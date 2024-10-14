@@ -26,7 +26,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     public ResponseDto<?> register(ScheduleRegisterDto registerDto) {
-        Optional<User> userOptional = userRepository.findById(registerDto.getUid());
+        Optional<User> userOptional = userRepository.findByUserId(registerDto.getUserId());
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }

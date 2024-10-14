@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.controller;
+package jaeseok.jaeseoklee.controller.schedule;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.schedule.ScheduleRegisterDto;
