@@ -438,7 +438,7 @@ public class SMS_KAKAO_Service {
 
     private ResponseDto<?> handleResponse(ResponseEntity<String> response) {
         if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseDto.setSuccess("메시지가 성공적으로 전송되었습니다.");
+            return ResponseDto.setSuccess("카카오톡(메세지) 확인 후 로그인을 계속해주세요.");
         } else {
             String errorMessage = response.getBody();
             log.error("메시지 전송 실패: {}", errorMessage);

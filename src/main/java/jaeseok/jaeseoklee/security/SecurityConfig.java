@@ -38,9 +38,9 @@ public class SecurityConfig {
             "/api/user/findUserIdByUserEmailCode",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/ws/**",
+//            "/ws/**",
             "/app/**",
-            "/topic/**",
+//            "/topic/**",
             "/api/user/findUserIdBySmsCode",
             "/api/user/sendKakao",
             "/api/user/userPwVerificationSmsCode"
@@ -55,7 +55,7 @@ public class SecurityConfig {
                                 .requestMatchers(AUTH_WHITE_LIST).permitAll() // 해당 엔드포인트는 접근 허용
 ////                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") <- 이건 자동으로 문자열 앞에 "ROLE_" 이 추가됨
 //                        .requestMatchers("/api/student/**", "/api/user/**").hasAuthority("USER") // "USER" 역할(role)을 가진 사용자만 허용
-                        .requestMatchers("/api/user/**", "/api/student/**").authenticated() // 토큰 검증이 완료된 사용자만 허용
+                        .requestMatchers("/api/user/**", "/api/student/**"/*, "/api/chat/**", "/ws/**", "/topic/**", "/app/**"*/).authenticated() // 토큰 검증이 완료된 사용자만 허용
 //                                .requestMatchers("/api/user/updatePassword/**", "/api/user/update/**").authenticated() // 임시로 얘네만 검증 걸어둠
                                 .anyRequest().permitAll() // 나머지 모든 엔드포인트 허용
                 )
