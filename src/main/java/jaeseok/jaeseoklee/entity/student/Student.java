@@ -3,7 +3,7 @@ package jaeseok.jaeseoklee.entity.student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
 //import jaeseok.jaeseoklee.entity.SeatTable;
-import jaeseok.jaeseoklee.dto.student.attendance.AttendanceViewDto;
+import jaeseok.jaeseoklee.entity.Grade;
 import jaeseok.jaeseoklee.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jaeseok.jaeseoklee.entity.schedule.DayOfWeek;
-import jaeseok.jaeseoklee.entity.student.Grade;
+import jaeseok.jaeseoklee.entity.Grade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

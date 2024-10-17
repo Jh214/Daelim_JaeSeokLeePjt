@@ -1,9 +1,8 @@
 package jaeseok.jaeseoklee.dto.student;
 
-import jaeseok.jaeseoklee.entity.student.Grade;
+import jaeseok.jaeseoklee.entity.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data

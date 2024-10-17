@@ -49,6 +49,9 @@ public class User implements UserDetails {
     private String schoolName;
     @Column(nullable = false, name = "class_num")
     private int classNum;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true, name = "grade")
+    private Grade grade;
 
 
     @ElementCollection(fetch = FetchType.EAGER) // "USER" 역할을 검증해야하기 때문에 즉시로딩 사용
@@ -117,6 +120,7 @@ public class User implements UserDetails {
         this.userNum = creationUserNumDash;
         this.schoolName = updateDto.getSchoolName();
         this.classNum = updateDto.getClassNum();
+        this.grade = updateDto.getGrade();
     }
 
     public void updatePassword(String hashPassword){

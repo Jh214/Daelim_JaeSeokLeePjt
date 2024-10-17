@@ -49,19 +49,15 @@ public class JwtPasswordVerificationAuthFilter extends OncePerRequestFilter {
             }
 
             String requestBody = jsonBuilder.toString();
-            String jsonUserId = null;
 
-            // 요청 본문이 비어 있지 않은 경우에만 JSON 검증 수행
-            if (!requestBody.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {});
                 log.info("request Data = " + requestData.toString());
 
-                jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
+                String jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
                 log.info("jsonUserId = " + jsonUserId);
-            }
 
-            String requestUserId = request.getParameter("user_id");
+            String requestUserId = request.getParameter("userId");
             log.info("paramUserId = " + requestUserId);
 
             String tokenUserId = claims.getSubject();

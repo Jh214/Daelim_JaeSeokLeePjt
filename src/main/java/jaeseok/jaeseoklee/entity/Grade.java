@@ -1,4 +1,4 @@
-package jaeseok.jaeseoklee.entity.student;
+package jaeseok.jaeseoklee.entity;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;

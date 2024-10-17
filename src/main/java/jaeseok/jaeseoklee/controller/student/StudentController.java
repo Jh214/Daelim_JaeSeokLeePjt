@@ -4,7 +4,6 @@ import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
-import jaeseok.jaeseoklee.entity.student.Grade;
 import jaeseok.jaeseoklee.service.student.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

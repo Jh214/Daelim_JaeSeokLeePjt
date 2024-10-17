@@ -79,6 +79,7 @@ public class UserService {
                 .userEmail(dto.getUserEmail())
                 .schoolName(dto.getSchoolName())
                 .classNum(dto.getClassNum())
+                .grade(dto.getGrade())
                 .roles(List.of("USER")) // 기본 역할 설정, 필요에 따라 수정 가능
                 .build();
 
@@ -93,8 +94,7 @@ public class UserService {
     }
 
 //    아이디 중복 검사
-    public ResponseDto<?> checkId(UserIdDto dto) {
-        String userId = dto.getUserId();
+    public ResponseDto<?> checkId(String userId) {
         if (userRepository.existsByUserId(userId)) {
             return ResponseDto.setFailed("이미 등록된 아이디입니다.");
         }
@@ -104,8 +104,8 @@ public class UserService {
 //    이메일 인증 및 이메일 중복 검사
 private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new ConcurrentHashMap<>();
 
-    public ResponseDto<?> checkEmail(UserEmailDto mailDto) {
-        if (userRepository.existsByUserEmail(mailDto.getUserEmail())) {
+    public ResponseDto<?> checkEmail(String userEmail) {
+        if (userRepository.existsByUserEmail(userEmail)) {
             return ResponseDto.setFailed("이미 등록된 이메일 입니다.");
         }
         return ResponseDto.setSuccess("등록 가능한 이메일입니다.");
@@ -248,12 +248,11 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
 //    회원삭제
-    public ResponseDto<?> delete(String userId, String token, UserPwDto userPwDto) {
+    public ResponseDto<?> delete(String userId, String token, String userPw) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
-        String userPw = userPwDto.getUserPw();
         // JWT 토큰 검증
         if (!jwtTokenProvider.validatePasswordVerificationToken(token, userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
@@ -265,9 +264,9 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             return ResponseDto.setFailed("권한이 없습니다.");
         }
         User user = optionalUser.get();
-//        if (userPw != null && !bCryptPasswordEncoder.matches(userPw, user.getPassword())){
-//            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
-//        }
+        if (userPw != null && !bCryptPasswordEncoder.matches(userPw, user.getPassword())){
+            return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
+        }
 
         try {
 //            현재 유저의 학생정보를 모두 삭제
@@ -299,7 +298,8 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
                         user.getUserDate(),
                         user.getUserEmail(),
                         user.getSchoolName(),
-                        user.getClassNum()
+                        user.getClassNum(),
+                        user.getGrade()
                 ))
                 .collect(Collectors.toList());
         return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);

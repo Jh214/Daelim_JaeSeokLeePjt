@@ -5,7 +5,6 @@ import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentRegisterDto;
 import jaeseok.jaeseoklee.dto.student.StudentUpdateDto;
 import jaeseok.jaeseoklee.dto.student.StudentViewDto;
-import jaeseok.jaeseoklee.entity.student.Grade;
 import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;

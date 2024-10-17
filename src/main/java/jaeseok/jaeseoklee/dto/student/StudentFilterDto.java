@@ -1,9 +1,7 @@
 package jaeseok.jaeseoklee.dto.student;
 
-import jaeseok.jaeseoklee.entity.student.Grade;
+import jaeseok.jaeseoklee.entity.Grade;
 import lombok.*;
-
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor

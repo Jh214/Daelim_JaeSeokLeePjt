@@ -56,25 +56,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 String requestBody = jsonBuilder.toString();
-                String jsonUserId = null;
 
-                // 요청 본문이 비어 있지 않은 경우에만 JSON 검증 수행
-                if (!requestBody.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {
                     });
                     log.info("request Data = " + requestData.toString());
 
-                    jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
+                    String jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
                     log.info("jsonUserId = " + jsonUserId);
-                }
 
-                String requestUserId = null;
+
                 // 요청 본문이 비어 있을 때만 쿼리 파라미터에서 userId를 가져옴
-                if (requestBody.isEmpty()) {
-                    requestUserId = request.getParameter("userId");
+//                if (requestBody.isEmpty()) {
+                    String requestUserId = request.getParameter("userId");
                     log.info("paramUserId = " + requestUserId);
-                }
+//                }
 
                     // tokenUserId는 항상 추출
                     String tokenUserId = claims.getSubject(); // 토큰에서 userId 가져오기

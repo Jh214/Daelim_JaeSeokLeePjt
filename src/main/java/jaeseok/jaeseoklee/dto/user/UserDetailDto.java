@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.dto.user;
 
+import jaeseok.jaeseoklee.entity.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,4 +19,5 @@ public class UserDetailDto {
     private String userEmail;
     private String schoolName;
     private int classNum;
+    private Grade grade;
 }

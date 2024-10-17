@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.dto.user;
 
+import jaeseok.jaeseoklee.entity.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,5 @@ public class SignUpDto {
     private String userEmail;
     private String schoolName;
     private int classNum;
+    private Grade grade;
 }

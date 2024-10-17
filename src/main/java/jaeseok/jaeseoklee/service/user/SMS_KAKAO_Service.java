@@ -146,8 +146,15 @@ public class SMS_KAKAO_Service {
         String userNum = sendKakao.getUserNum();
         String userId = sendKakao.getUserId();
         Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if(optionalUser.isEmpty()){
+            return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
+        }
         User user = optionalUser.get();
         String formattedNum = formatUserNum(userNum);
+
+        if (user == null || !user.getUserId().equals(userId)) {
+            return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
+        }
 
         if (userId.isEmpty()){
             return ResponseDto.setFailed("아이디를 입력하여 주세요.");
@@ -155,6 +162,10 @@ public class SMS_KAKAO_Service {
         // 전화번호 유효성 검사
         if (userNum == null || userNum.isEmpty()) {
             return ResponseDto.setFailed("유효하지 않은 사용자 번호입니다.");
+        }
+
+        if(optionalUser.isEmpty() || user.getUserId().equals(userId)){
+            return ResponseDto.setFailed("존재하지 않는 사용자입니다.");
         }
 
         if (!user.getUserNum().equals(formattedNum)){

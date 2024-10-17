@@ -3,7 +3,7 @@ package jaeseok.jaeseoklee.repository.student;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
-import jaeseok.jaeseoklee.entity.student.Grade;
+import jaeseok.jaeseoklee.entity.Grade;
 import jaeseok.jaeseoklee.entity.student.QStudent;
 import jaeseok.jaeseoklee.entity.student.Student;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static jaeseok.jaeseoklee.entity.student.QStudent.student;
-import static javax.management.Query.eq;
 
 @Repository
 @RequiredArgsConstructor

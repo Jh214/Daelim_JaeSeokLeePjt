@@ -1,7 +1,6 @@
 package jaeseok.jaeseoklee.dto.student;
 
-import jaeseok.jaeseoklee.entity.student.Attendance;
-import jaeseok.jaeseoklee.entity.student.Grade;
+import jaeseok.jaeseoklee.entity.Grade;
 import lombok.*;
 
 @Data
