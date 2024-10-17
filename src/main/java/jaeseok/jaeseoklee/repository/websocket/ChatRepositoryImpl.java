@@ -2,7 +2,6 @@ package jaeseok.jaeseoklee.repository.websocket;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.websocket.QResponseChat;
 import jaeseok.jaeseoklee.dto.websocket.ResponseChat;
 import jaeseok.jaeseoklee.entity.websocket.Chat;

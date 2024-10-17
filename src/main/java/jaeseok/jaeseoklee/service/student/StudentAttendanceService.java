@@ -2,10 +2,8 @@ package jaeseok.jaeseoklee.service.student;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
-import jaeseok.jaeseoklee.dto.student.StudentViewDto;
 import jaeseok.jaeseoklee.dto.student.attendance.AttendanceViewDto;
 import jaeseok.jaeseoklee.entity.User;
-import jaeseok.jaeseoklee.entity.student.Attendance;
 import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.student.StudentAttendanceTable;
 import jaeseok.jaeseoklee.repository.UserRepository;

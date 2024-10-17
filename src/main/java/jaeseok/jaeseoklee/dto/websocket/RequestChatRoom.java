@@ -2,9 +2,7 @@ package jaeseok.jaeseoklee.dto.websocket;
 
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.entity.websocket.ChatRoom;
-import jaeseok.jaeseoklee.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

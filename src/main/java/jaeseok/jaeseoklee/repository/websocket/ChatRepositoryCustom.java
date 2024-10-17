@@ -1,6 +1,5 @@
 package jaeseok.jaeseoklee.repository.websocket;
 
-import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.websocket.ResponseChat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

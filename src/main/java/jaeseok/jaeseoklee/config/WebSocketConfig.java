@@ -1,6 +1,7 @@
 package jaeseok.jaeseoklee.config;
 
 //import jaeseok.jaeseoklee.controller.websocket.StompHandler;
+import jaeseok.jaeseoklee.controller.websocket.StompHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ import org.springframework.web.socket.config.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-//    private final StompHandler stompHandler; // jwt 인증
+    private final StompHandler stompHandler; // jwt 인증
 
     // 웹소켓 configuration의 addHandler 메소드와 유사
     // cors, SockJS 설정 가능
@@ -41,8 +42,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.enableSimpleBroker("/topic");
     }
 
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(stompHandler);
-//    }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompHandler);
+    }
 }

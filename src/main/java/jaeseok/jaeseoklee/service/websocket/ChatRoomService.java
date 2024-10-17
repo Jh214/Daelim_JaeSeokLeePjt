@@ -7,7 +7,6 @@ import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.entity.websocket.ChatRoom;
 import jaeseok.jaeseoklee.repository.UserRepository;
 import jaeseok.jaeseoklee.repository.websocket.ChatRoomRepository;
-import jaeseok.jaeseoklee.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

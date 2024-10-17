@@ -2,7 +2,6 @@ package jaeseok.jaeseoklee.controller.user;
 
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.user.find.*;
-import jaeseok.jaeseoklee.dto.user.sms.ValidatePhoneNumAndSendKakao;
 import jaeseok.jaeseoklee.service.user.FindUserService;
 import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
 import org.springframework.beans.factory.annotation.Autowired;

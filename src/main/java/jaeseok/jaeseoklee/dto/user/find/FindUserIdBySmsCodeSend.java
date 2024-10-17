@@ -2,7 +2,6 @@ package jaeseok.jaeseoklee.dto.user.find;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
