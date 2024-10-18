@@ -53,15 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 String requestBody = jsonBuilder.toString();
+                String jsonUserId = null;
 
+                if (!requestBody.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {
                     });
                     log.info("request Data = " + requestData.toString());
 
-                    String jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
+                    jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
                     log.info("jsonUserId = " + jsonUserId);
-
+                }
 
                 // 요청 본문이 비어 있을 때만 쿼리 파라미터에서 userId를 가져옴
 //                if (requestBody.isEmpty()) {

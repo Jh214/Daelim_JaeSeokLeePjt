@@ -7,17 +7,17 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Grade {
-    FIRSTGRADE("1학년"),
-    SECONDGRADE("2학년"),
-    THIRDGRADE("3학년"),
-    FOURTHGRADE("4학년"),
-    FIFTHGRADE("5학년"),
-    SIXTHGRADE("6학년");
+    FIRSTGRADE(1),
+    SECONDGRADE(2),
+    THIRDGRADE(3),
+    FOURTHGRADE(4),
+    FIFTHGRADE(5),
+    SIXTHGRADE(6);
 
-    private final String gradeDescription;
+    private final int gradeDescription;
 
     @JsonValue
-    public String getGradeDescription() {
+    public int getGradeDescription() {
         return gradeDescription;
     }
 }

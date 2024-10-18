@@ -47,12 +47,17 @@ public class JwtEmailVerificationAuthFilter extends OncePerRequestFilter {
 
                 String requestBody = jsonBuilder.toString();
 
+                String jsonUserId = null;
+
+                if (!requestBody.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {});
+                    Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {
+                    });
                     log.info("request Data = " + requestData.toString());
 
-                    String jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
+                    jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
                     log.info("jsonUserId = " + jsonUserId);
+                }
 
                 String requestUserId = request.getParameter("userId");
                 log.info("paramUserId = " + requestUserId);
