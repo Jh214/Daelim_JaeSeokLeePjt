@@ -47,7 +47,7 @@ public class Student {
 
     public void update(StudentUpdateDto updateDto) {
         this.studentName = updateDto.getStudentName();
-        this.studentNum = updateDto.getStudentNum();
+        this.studentNum = updateDto.getStudentNum().replaceAll("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
         this.studentCode = updateDto.getStudentCode();
     }
 }

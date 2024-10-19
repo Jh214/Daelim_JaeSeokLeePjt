@@ -73,11 +73,11 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResponseDto<?> delete(@RequestParam(name = "userId") String userId,
                                  @RequestHeader("PasswordVerAuth") String token,
-                                 @RequestBody String userPw) {
+                                 @RequestBody UserPwDto userPwDto) {
 
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-        ResponseDto<?> result = userService.delete(userId, jwtToken, userPw);
+        ResponseDto<?> result = userService.delete(userId, jwtToken, userPwDto);
         return result;
     }
 
@@ -90,16 +90,16 @@ public class UserController {
 
 //    아이디 중복 검사
     @PostMapping("/checkId")
-    public ResponseDto<?> CheckId(@RequestBody String userId) {
-        ResponseDto<?> result = userService.checkId(userId);
+    public ResponseDto<?> CheckId(@RequestBody UserIdDto userIdDto) {
+        ResponseDto<?> result = userService.checkId(userIdDto);
 
         return result;
     }
 
 //    이메일 중복 검사
     @PostMapping("/checkEmail")
-    public ResponseDto<?> CheckEmail(@RequestBody String userEmail) {
-        ResponseDto<?> result = userService.checkEmail(userEmail);
+    public ResponseDto<?> CheckEmail(@RequestBody UserEmailDto userEmailDto) {
+        ResponseDto<?> result = userService.checkEmail(userEmailDto);
 
         return result;
     }

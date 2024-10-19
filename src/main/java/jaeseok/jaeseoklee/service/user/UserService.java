@@ -89,7 +89,8 @@ public class UserService {
     }
 
 //    아이디 중복 검사
-    public ResponseDto<?> checkId(String userId) {
+    public ResponseDto<?> checkId(UserIdDto userIdDto) {
+        String userId = userIdDto.getUserId();
         if (userRepository.existsByUserId(userId)) {
             return ResponseDto.setFailed("이미 등록된 아이디입니다.");
         }
@@ -99,7 +100,8 @@ public class UserService {
 //    이메일 인증 및 이메일 중복 검사
 private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new ConcurrentHashMap<>();
 
-    public ResponseDto<?> checkEmail(String userEmail) {
+    public ResponseDto<?> checkEmail(UserEmailDto userEmailDto) {
+        String userEmail = userEmailDto.getUserEmail();
         if (userRepository.existsByUserEmail(userEmail)) {
             return ResponseDto.setFailed("이미 등록된 이메일 입니다.");
         }
@@ -197,6 +199,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
         User user = userOptional.get();
 
         if (!bCryptPasswordEncoder.matches(dto.getCurrentPw(), user.getUserPw())) {
+            log.info("currentPw = " + bCryptPasswordEncoder.encode(dto.getCurrentPw()));
             return ResponseDto.setFailed("현재 비밀번호가 일치하지 않습니다.");
         }
 
@@ -243,8 +246,9 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
 //    회원삭제
-    public ResponseDto<?> delete(String userId, String token, String userPw) {
+    public ResponseDto<?> delete(String userId, String token, UserPwDto userPwDto) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
+        String userPw = userPwDto.getUserPw();
         if (optionalUser.isEmpty()) {
             return ResponseDto.setFailed("해당 회원을 찾을 수 없습니다.");
         }
@@ -258,8 +262,11 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
         if (!authentication.getName().equals(userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
+        log.info("no Hash userPw = " + userPw);
         User user = optionalUser.get();
-        if (userPw != null && !bCryptPasswordEncoder.matches(userPw, user.getPassword())){
+        if (!bCryptPasswordEncoder.matches(userPw, user.getUserPw())){
+            log.info("userPw = " + bCryptPasswordEncoder.encode(userPw));
+            log.info("user.getUserPw = " + user.getUserPw());
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
 

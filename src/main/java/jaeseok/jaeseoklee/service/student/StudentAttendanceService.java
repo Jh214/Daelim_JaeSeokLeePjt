@@ -4,6 +4,7 @@ import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.attendance.AttendanceViewDto;
 import jaeseok.jaeseoklee.entity.User;
+import jaeseok.jaeseoklee.entity.student.Attendance;
 import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.entity.student.StudentAttendanceTable;
 import jaeseok.jaeseoklee.repository.UserRepository;
@@ -59,14 +60,29 @@ public class StudentAttendanceService {
     }
 
     private AttendanceViewDto convertToDto(Student student) {
-        StudentAttendanceTable studentAttendanceTable = (StudentAttendanceTable) student.getStudentAttendanceTable();
+        List<StudentAttendanceTable> attendanceTables = student.getStudentAttendanceTable();
 
-        return new AttendanceViewDto(
-                student.getStudentName(),
-                student.getStudentGrade(),
-                student.getClassNum(),
-                studentAttendanceTable.getAttendanceStatus(),
-                studentAttendanceTable.getAttendanceReason()
-        );
+        if (attendanceTables != null && !attendanceTables.isEmpty()) {
+//            출석 기록이 있을 경우
+            StudentAttendanceTable studentAttendanceTable = attendanceTables.get(0);
+
+            return new AttendanceViewDto(
+                    student.getStudentName(),
+                    student.getStudentGrade(),
+                    student.getClassNum(),
+                    studentAttendanceTable.getAttendanceStatus(),
+                    studentAttendanceTable.getAttendanceReason()
+            );
+        } else {
+//             출석 기록이 없을 경우
+            return new AttendanceViewDto(
+                    student.getStudentName(),
+                    student.getStudentGrade(),
+                    student.getClassNum(),
+                    Attendance.PRESENT,  // 기본 출석 상태
+                    ""  // 기본 출석 이유
+            );
+        }
     }
+
 }
