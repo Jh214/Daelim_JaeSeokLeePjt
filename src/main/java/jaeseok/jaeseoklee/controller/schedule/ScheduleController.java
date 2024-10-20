@@ -35,8 +35,8 @@ public class ScheduleController {
         return result;
     }
 
-    @DeleteMapping("/delete/{scheduleId}")
-    public ResponseDto<?> deleteSchedule(@PathVariable(name = "scheduleId") Long scheduleId) {
+    @DeleteMapping("/delete")
+    public ResponseDto<?> deleteSchedule(@RequestParam(name = "scheduleId") Long scheduleId) {
         ResponseDto<?> result = scheduleService.delete(scheduleId);
 
         return result;

@@ -64,7 +64,7 @@ public class ScheduleService {
     }
 
     public ResponseDto<?> update(ScheduleUpdateDto updateDto) {
-        User user = userRepository.findById(updateDto.getUid())
+        User user = userRepository.findByUserId(updateDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."));
 
         Schedule schedule = scheduleRepository.findById(updateDto.getScheduleId())

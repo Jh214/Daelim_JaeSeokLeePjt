@@ -13,6 +13,6 @@ public class ScheduleUpdateDto {
     private String subject;
     private Period period;
     private DayOfWeek dayOfWeek;
-    private Long uid;
+    private String userId;
     private Long scheduleId;
 }
