@@ -28,7 +28,18 @@ public class ScheduleService {
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
+
         User user = userOptional.get();
+
+        boolean isDuplicate = scheduleRepository.existsByUserAndPeriodAndDayOfWeek(
+                user,
+                registerDto.getPeriod(),
+                registerDto.getDayOfWeek()
+        );
+
+        if (isDuplicate) {
+            return ResponseDto.setFailed("이미 해당 시간에 등록된 과목이 있습니다.");
+        }
 
         Schedule schedule = Schedule.builder()
                 .subject(registerDto.getSubject())
@@ -59,7 +70,8 @@ public class ScheduleService {
         return new ScheduleViewDto(
                 schedule.getSubject(),
                 schedule.getPeriod(),
-                schedule.getDayOfWeek()
+                schedule.getDayOfWeek(),
+                schedule.getScheduleId()
         );
     }
 

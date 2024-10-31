@@ -22,6 +22,9 @@ public class ResponseChatRoom {
                         .masterId(chatRoom.getCreator().getUserId())
                         .name(chatRoom.getName())
                         .participantId(chatRoom.getParticipant().getUserId())
+                        .masterName(chatRoom.getCreator().getUserRealName())
+                        .participantName(chatRoom.getParticipant().getUserRealName())
+                        .lastMessages(chatRoom.getLatestMessage() != null ? chatRoom.getLatestMessage().getMessage() : "No messages yet")
                         .build())
                 .collect(Collectors.toList());
     }

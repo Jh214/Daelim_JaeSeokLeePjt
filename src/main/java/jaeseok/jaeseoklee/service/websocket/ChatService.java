@@ -52,6 +52,6 @@ public class ChatService {
         int size = requestChat.getSize();
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "sendTime"));
-        return chatRepository.getChats(pageable);
+        return chatRepository.getChats(chatRoomId, pageable);
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -57,12 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (!requestBody.isEmpty()) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    Map<String, String> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, String>>() {
-                    });
+                    Map<String, Object> requestData = objectMapper.readValue(requestBody, new TypeReference<Map<String, Object>>() {});
                     log.info("request Data = " + requestData.toString());
 
-                    jsonUserId = requestData.get("userId"); // JSON에서 userId 추출
+                    // JSON에서 userId와 studentNum 추출
+                    jsonUserId = (String) requestData.get("userId");
                     log.info("jsonUserId = " + jsonUserId);
+
+                    List<String> studentNumList = (List<String>) requestData.get("studentNum");
+                    log.info("studentNumList = " + studentNumList.toString());
                 }
 
                 // 요청 본문이 비어 있을 때만 쿼리 파라미터에서 userId를 가져옴

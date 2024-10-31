@@ -19,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,12 +37,11 @@ public class SecurityConfig {
             "/api/user/findUserIdByUserEmailCode",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-//            "/ws/**",
             "/app/**",
-//            "/topic/**",
             "/api/user/findUserIdBySmsCode",
             "/api/user/sendKakao",
-            "/api/user/userPwVerificationSmsCode"
+            "/api/user/userPwVerificationSmsCode",
+            "/api/user/social/**" // 소셜 로그인 엔드포인트 허용
     };
 
     @Bean
@@ -52,12 +50,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                                .requestMatchers(AUTH_WHITE_LIST).permitAll() // 해당 엔드포인트는 접근 허용
-////                        .requestMatchers("/api/user/**", "/api/student/**").hasRole("USER") <- 이건 자동으로 문자열 앞에 "ROLE_" 이 추가됨
-//                        .requestMatchers("/api/student/**", "/api/user/**").hasAuthority("USER") // "USER" 역할(role)을 가진 사용자만 허용
-                        .requestMatchers("/api/user/**", "/api/student/**"/*, "/api/chat/**", "/ws/**", "/topic/**", "/app/**"*/).authenticated() // 토큰 검증이 완료된 사용자만 허용
-//                                .requestMatchers("/api/user/updatePassword/**", "/api/user/update/**").authenticated() // 임시로 얘네만 검증 걸어둠
-                                .anyRequest().permitAll() // 나머지 모든 엔드포인트 허용
+                        .requestMatchers(AUTH_WHITE_LIST).permitAll() // 해당 엔드포인트는 접근 허용
+                        .requestMatchers("/api/user/**", "/api/student/**").authenticated() // 토큰 검증이 완료된 사용자만 허용
+                        .anyRequest().permitAll() // 나머지 모든 엔드포인트 허용
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/api/user/social/google", true) // 인증 성공 후 강제 리디렉션
+                        .failureUrl("/login?error=true") // 실패 시 리디렉션 경로
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
@@ -74,26 +73,20 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpStatus.FORBIDDEN.value()); // 403에러 코드 설정
-            response.setContentType("application/json;charset=UTF-8"); // 컨텐츠 타입과 인코딩 설정
-
-            String jsonResponse = "{\"message\": \"권한이 없습니다.\"}"; // JSON 문자열 데이터
-
-            response.getWriter().write(jsonResponse); // JSON 문자열로 반환
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType("application/json;charset=UTF-8");
+            String jsonResponse = "{\"message\": \"권한이 없습니다.\"}";
+            response.getWriter().write(jsonResponse);
         };
     }
 
     @Bean
     public AuthenticationEntryPoint customAuthenticationEntryPoint() {
         return (request, response, authException) -> {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 401에러 코드 설정
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
-
             String jsonResponse = "{\"message\": \"인증이 필요합니다.\"}";
-
             response.getWriter().write(jsonResponse);
         };
     }
-
-
 }

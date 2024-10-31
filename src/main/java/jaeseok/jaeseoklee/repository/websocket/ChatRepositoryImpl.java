@@ -31,7 +31,7 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
     }
 
     @Override
-    public Page<ResponseChat> getChats(Pageable pageable) {
+    public Page<ResponseChat> getChats(Long chatRoomId, Pageable pageable) {
         List<ResponseChat> content = queryFactory
                 .select(new QResponseChat(
                         chat.chatId,
@@ -43,6 +43,7 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
                 ))
                 .from(chat)
                 .leftJoin(chat.chatRoom, chatRoom)
+                .where(chat.chatRoom.chatRoomId.eq(chatRoomId))
                 .orderBy(chat.sendTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -50,7 +51,8 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
 
         JPAQuery<Chat> countQuery = queryFactory
                 .selectFrom(chat)
-                .leftJoin(chat.chatRoom, chatRoom);
+                .leftJoin(chat.chatRoom, chatRoom)
+                .where(chat.chatRoom.chatRoomId.eq(chatRoomId));
 
 //        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);

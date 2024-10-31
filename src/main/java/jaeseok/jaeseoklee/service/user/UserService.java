@@ -3,7 +3,9 @@ package jaeseok.jaeseoklee.service.user;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
 import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
+import jaeseok.jaeseoklee.dto.student.StudentViewDto;
 import jaeseok.jaeseoklee.dto.user.*;
+import jaeseok.jaeseoklee.entity.Grade;
 import jaeseok.jaeseoklee.entity.User;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;
@@ -13,6 +15,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -120,6 +125,9 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             // 로그인 성공
             User user = findUser.get();
             String userName = user.getUserRealName(); // 사용자 이름 가져오기
+            Grade userGrade = user.getGrade();
+            int classNum = user.getClassNum();
+
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userId,
@@ -129,7 +137,10 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("userName", userName);
+            responseData.put("grade", userGrade);
+            responseData.put("classNum", classNum);
             responseData.put("jwtToken", jwtTokenDto);
+
 
             String successMessage = "로그인 성공!";
             return ResponseDto.setSuccessData(successMessage, responseData);
@@ -306,4 +317,20 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
                 .collect(Collectors.toList());
         return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);
     }
+
+    public ResponseDto<?> userList(UserListRequestBySchoolNameDto dto){
+        List<User> userList = userRepository.findUserBySchoolName(dto.getSchoolName());
+
+        if (userList.isEmpty()) {
+            return ResponseDto.setFailed("회원이 없습니다.");
+        }
+
+        // userId와 userName만 추출하여 UserListViewDto로 변환
+        List<UserListViewDto> userListDto = userList.stream()
+                .map(user -> new UserListViewDto(user.getUserId(), user.getUserRealName()))
+                .collect(Collectors.toList());
+
+        return ResponseDto.setSuccessData("회원 리스트 조회", userListDto);
+    }
+
 }

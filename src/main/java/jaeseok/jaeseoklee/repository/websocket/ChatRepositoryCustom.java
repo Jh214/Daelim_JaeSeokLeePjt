@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatRepositoryCustom {
-    Page<ResponseChat> getChats(Pageable pageable);
+    Page<ResponseChat> getChats(Long chatRoomId, Pageable pageable);
 }

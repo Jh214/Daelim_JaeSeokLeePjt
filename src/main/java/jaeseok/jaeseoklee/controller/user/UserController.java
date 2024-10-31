@@ -1,23 +1,34 @@
 package jaeseok.jaeseoklee.controller.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
+import jaeseok.jaeseoklee.dto.user.sms.OrgSendSms;
 import jaeseok.jaeseoklee.dto.user.sms.ValidatePhoneNumAndSendKakao;
 import jaeseok.jaeseoklee.dto.user.sms.VerificationSmsCode;
 import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
+import jaeseok.jaeseoklee.service.user.SocialUserService;
 import jaeseok.jaeseoklee.service.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "회원(교사)", description = "회원 관련 api")
 @RestController
 @RequestMapping("/api/user")
+@Slf4j
 public class UserController {
     @Autowired
     UserService userService;
     @Autowired
     SMS_KAKAO_Service smsKakaoService;
+    @Autowired
+    SocialUserService socialUserService;
 
 //    회원가입
     @PostMapping("/signup")
@@ -116,5 +127,29 @@ public class UserController {
         ResponseDto<?> result = smsKakaoService.verificationKakaoCode(verCodeDto);
 
         return result;
+    }
+
+    @Tag(name = "단체문자발송", description = "아직 개발 중")
+    @PostMapping("/orgSendSms")
+    public ResponseDto<?> orgSendSms(@RequestBody OrgSendSms orgSendSms){
+        ResponseDto<?> result = smsKakaoService.orgSendSms(orgSendSms);
+        return result;
+    }
+
+    @GetMapping("/userList")
+    public ResponseDto<?> userList(@RequestBody UserListRequestBySchoolNameDto dto) {
+        ResponseDto<?> result = userService.userList(dto);
+
+        return result;
+    }
+
+    @GetMapping("/social/google")
+    public ResponseDto<?> googleLogin(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) {
+            return ResponseDto.setFailed("인증되지 않은 요청입니다.");
+        }
+
+        // SocialUserService의 변경된 메서드에 OAuth2User 객체 직접 전달
+        return socialUserService.processGoogleLogin(principal);
     }
 }

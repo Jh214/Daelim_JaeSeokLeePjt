@@ -13,4 +13,5 @@ public class ScheduleViewDto {
     private String subject;
     private Period period;
     private DayOfWeek dayOfWeek;
+    private Long scheduleId;
 }
