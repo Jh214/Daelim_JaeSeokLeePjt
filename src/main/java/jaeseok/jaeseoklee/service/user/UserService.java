@@ -3,10 +3,13 @@ package jaeseok.jaeseoklee.service.user;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
 import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
+import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.dto.student.StudentViewDto;
 import jaeseok.jaeseoklee.dto.user.*;
+import jaeseok.jaeseoklee.dto.user.sms.OrgSendSmsInfo;
 import jaeseok.jaeseoklee.entity.Grade;
 import jaeseok.jaeseoklee.entity.User;
+import jaeseok.jaeseoklee.entity.student.Student;
 import jaeseok.jaeseoklee.repository.ScheduleRepository;
 import jaeseok.jaeseoklee.repository.student.StudentRepository;
 import jaeseok.jaeseoklee.repository.UserRepository;
@@ -331,6 +334,39 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccessData("회원 리스트 조회", userListDto);
+    }
+
+    public ResponseDto<?> orgSendSmsInfo(String userId) {
+        int page = 0;
+        int size = 12;
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+
+        if (!userOptional.isPresent()) {
+            return ResponseDto.setFailed("잘못된 요청입니다.");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 필터링된 학생 목록 조회
+        Page<Student> studentsPage = studentRepository.findByUserId(userId, pageable);
+
+        if (studentsPage.isEmpty()) {
+            return ResponseDto.setFailed("조건에 맞는 학생 정보가 없습니다.");
+        }
+
+        List<Student> students = studentsPage.getContent();
+
+        List<OrgSendSmsInfo> studentViewDto = students.stream()
+                .map(this::convertToDto)  // `convertToDto` 메서드를 통해 변환
+                .collect(Collectors.toList());
+
+        return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", studentViewDto);
+    }
+
+    private OrgSendSmsInfo convertToDto(Student student) {
+        return new OrgSendSmsInfo(
+                student.getStudentName(),
+                student.getStudentNum()
+        );
     }
 
 }

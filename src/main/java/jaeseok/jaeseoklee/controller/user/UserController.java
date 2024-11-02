@@ -129,7 +129,15 @@ public class UserController {
         return result;
     }
 
-    @Tag(name = "단체문자발송", description = "아직 개발 중")
+    @Tag(name = "단체문자발송 페이지")
+    @GetMapping("/orgSendSmsInfo")
+    public ResponseDto<?> orgSendSmsInfo(@RequestParam(name = "userId") String userId){
+        ResponseDto<?> result = userService.orgSendSmsInfo(userId);
+
+        return result;
+    }
+
+    @Tag(name = "단체문자발송")
     @PostMapping("/orgSendSms")
     public ResponseDto<?> orgSendSms(@RequestBody OrgSendSms orgSendSms){
         ResponseDto<?> result = smsKakaoService.orgSendSms(orgSendSms);
