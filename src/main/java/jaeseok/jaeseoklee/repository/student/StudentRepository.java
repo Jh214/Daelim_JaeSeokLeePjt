@@ -8,12 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long>, StudentRepositoryCustom {
     @Query("SELECT s FROM Student s WHERE s.user.userId = :userId")
     Page<Student> findByUserId(@Param("userId") String userId, Pageable pageable);
+
+    @Query("SELECT s FROM Student s WHERE s.user.userId = :userId")
+    List<Student> findStudentListByUserId(@Param("userId") String userId);
 
     boolean existsByStudentNumAndUser_UserId(@Param("studentNum") String studentNum, @Param("userId") String userId);
 

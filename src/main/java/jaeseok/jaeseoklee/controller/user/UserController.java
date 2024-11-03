@@ -145,8 +145,8 @@ public class UserController {
     }
 
     @GetMapping("/userList")
-    public ResponseDto<?> userList(@RequestBody UserListRequestBySchoolNameDto dto) {
-        ResponseDto<?> result = userService.userList(dto);
+    public ResponseDto<?> userList(@RequestParam(name = "schoolName") String schoolName) {
+        ResponseDto<?> result = userService.userList(schoolName);
 
         return result;
     }

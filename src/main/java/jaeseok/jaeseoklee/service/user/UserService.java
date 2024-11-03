@@ -3,8 +3,6 @@ package jaeseok.jaeseoklee.service.user;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.jwt.JWTConfirmPasswordTokenDto;
 import jaeseok.jaeseoklee.dto.jwt.JwtTokenDto;
-import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
-import jaeseok.jaeseoklee.dto.student.StudentViewDto;
 import jaeseok.jaeseoklee.dto.user.*;
 import jaeseok.jaeseoklee.dto.user.sms.OrgSendSmsInfo;
 import jaeseok.jaeseoklee.entity.Grade;
@@ -17,11 +15,6 @@ import jaeseok.jaeseoklee.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,8 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +35,6 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final StudentRepository studentRepository;
     private final ScheduleRepository scheduleRepository;
-    @Autowired
-    private JavaMailSender emailSender;
 
     // 회원가입
     public ResponseDto<?> signUp(SignUpDto dto) {
@@ -105,9 +94,6 @@ public class UserService {
         return ResponseDto.setSuccess("등록 가능한 아이디입니다.");
     }
 
-//    이메일 인증 및 이메일 중복 검사
-private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new ConcurrentHashMap<>();
-
     public ResponseDto<?> checkEmail(UserEmailDto userEmailDto) {
         String userEmail = userEmailDto.getUserEmail();
         if (userRepository.existsByUserEmail(userEmail)) {
@@ -130,6 +116,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             String userName = user.getUserRealName(); // 사용자 이름 가져오기
             Grade userGrade = user.getGrade();
             int classNum = user.getClassNum();
+            String schoolName = user.getSchoolName();
 
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -143,6 +130,7 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
             responseData.put("grade", userGrade);
             responseData.put("classNum", classNum);
             responseData.put("jwtToken", jwtTokenDto);
+            responseData.put("schoolName", schoolName);
 
 
             String successMessage = "로그인 성공!";
@@ -321,9 +309,9 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
         return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);
     }
 
-    public ResponseDto<?> userList(UserListRequestBySchoolNameDto dto){
-        List<User> userList = userRepository.findUserBySchoolName(dto.getSchoolName());
-
+    public ResponseDto<?> userList(String schoolName){
+        List<User> userList = userRepository.findUserBySchoolName(schoolName);
+        log.info("schoolName = " + schoolName);
         if (userList.isEmpty()) {
             return ResponseDto.setFailed("회원이 없습니다.");
         }
@@ -337,26 +325,21 @@ private final ConcurrentMap<String, SendEmailSignUpDto> codeStore = new Concurre
     }
 
     public ResponseDto<?> orgSendSmsInfo(String userId) {
-        int page = 0;
-        int size = 12;
         Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (!userOptional.isPresent()) {
             return ResponseDto.setFailed("잘못된 요청입니다.");
         }
-        Pageable pageable = PageRequest.of(page, size);
 
-        // 필터링된 학생 목록 조회
-        Page<Student> studentsPage = studentRepository.findByUserId(userId, pageable);
+        // 학생 목록 조회 (List 타입)
+        List<Student> students = studentRepository.findStudentListByUserId(userId);
 
-        if (studentsPage.isEmpty()) {
+        if (students.isEmpty()) {
             return ResponseDto.setFailed("조건에 맞는 학생 정보가 없습니다.");
         }
 
-        List<Student> students = studentsPage.getContent();
-
         List<OrgSendSmsInfo> studentViewDto = students.stream()
-                .map(this::convertToDto)  // `convertToDto` 메서드를 통해 변환
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccessData("학생 정보를 불러왔습니다.", studentViewDto);

@@ -41,7 +41,7 @@ public class SecurityConfig {
             "/api/user/findUserIdBySmsCode",
             "/api/user/sendKakao",
             "/api/user/userPwVerificationSmsCode",
-            "/api/user/social/**" // 소셜 로그인 엔드포인트 허용
+            "/api/user/social/**"
     };
 
     @Bean

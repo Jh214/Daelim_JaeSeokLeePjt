@@ -65,8 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     jsonUserId = (String) requestData.get("userId");
                     log.info("jsonUserId = " + jsonUserId);
 
-                    List<String> studentNumList = (List<String>) requestData.get("studentNum");
-                    log.info("studentNumList = " + studentNumList.toString());
+//                    List<String> studentNumList = (List<String>) requestData.get("studentNum");
+//                    log.info("studentNumList = " + studentNumList.toString());
                 }
 
                 // 요청 본문이 비어 있을 때만 쿼리 파라미터에서 userId를 가져옴
