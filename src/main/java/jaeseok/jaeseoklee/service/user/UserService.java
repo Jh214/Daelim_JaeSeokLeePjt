@@ -309,17 +309,24 @@ public class UserService {
         return ResponseDto.setSuccessData("회원 정보를 성공적으로 불러왔습니다.", userView);
     }
 
-    public ResponseDto<?> userList(String schoolName){
+    public ResponseDto<?> userList(String schoolName, String userId) {
+        // schoolName으로 유저 목록 조회
         List<User> userList = userRepository.findUserBySchoolName(schoolName);
         log.info("schoolName = " + schoolName);
+
         if (userList.isEmpty()) {
             return ResponseDto.setFailed("회원이 없습니다.");
         }
 
-        // userId와 userName만 추출하여 UserListViewDto로 변환
+        // 로그인된 userId와 일치하지 않는 유저들만 필터링하여 UserListViewDto로 변환
         List<UserListViewDto> userListDto = userList.stream()
+                .filter(user -> !user.getUserId().equals(userId))  // 전달된 userId를 제외하고
                 .map(user -> new UserListViewDto(user.getUserId(), user.getUserRealName()))
                 .collect(Collectors.toList());
+
+        if (userListDto.isEmpty()) {
+            return ResponseDto.setFailed("해당 학교에 다른 회원이 없습니다.");
+        }
 
         return ResponseDto.setSuccessData("회원 리스트 조회", userListDto);
     }

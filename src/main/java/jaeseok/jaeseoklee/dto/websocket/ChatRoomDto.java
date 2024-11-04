@@ -17,9 +17,10 @@ public class ChatRoomDto {
     private String masterName;
     private String participantName;
     private String lastMessages;
+    private String lastMessageTime;
 
     @Builder
-    public ChatRoomDto(Long chatRoomId, String masterId, String name, String participantId, String masterName, String participantName, String lastMessages) {
+    public ChatRoomDto(Long chatRoomId, String masterId, String name, String participantId, String masterName, String participantName, String lastMessages, String lastMessagesTime) {
         this.chatRoomId = chatRoomId;
         this.masterId = masterId;
         this.participantId = participantId;
@@ -27,5 +28,6 @@ public class ChatRoomDto {
         this.masterName = masterName;
         this.participantName = participantName;
         this.lastMessages = lastMessages;
+        this.lastMessageTime = lastMessagesTime;
     }
 }

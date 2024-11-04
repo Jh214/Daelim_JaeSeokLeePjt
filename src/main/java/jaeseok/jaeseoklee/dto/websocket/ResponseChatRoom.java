@@ -15,17 +15,7 @@ public class ResponseChatRoom {
     List<ChatRoomDto> chatRoomDtoList;
 
     @Builder
-    public ResponseChatRoom(List<ChatRoom> chatRoomList) {
-        this.chatRoomDtoList = chatRoomList.stream()
-                .map(chatRoom -> ChatRoomDto.builder()
-                        .chatRoomId(chatRoom.getChatRoomId())
-                        .masterId(chatRoom.getCreator().getUserId())
-                        .name(chatRoom.getName())
-                        .participantId(chatRoom.getParticipant().getUserId())
-                        .masterName(chatRoom.getCreator().getUserRealName())
-                        .participantName(chatRoom.getParticipant().getUserRealName())
-                        .lastMessages(chatRoom.getLatestMessage() != null ? chatRoom.getLatestMessage().getMessage() : "No messages yet")
-                        .build())
-                .collect(Collectors.toList());
+    public ResponseChatRoom(List<ChatRoomDto> chatRoomDtoList) {
+        this.chatRoomDtoList = chatRoomDtoList;
     }
 }
