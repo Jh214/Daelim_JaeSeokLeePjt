@@ -83,14 +83,14 @@ public class ChatRoomService {
             // 마지막 메시지 시간 가져오기
             String lastMessageTime = (chatRoom.getLatestMessage() != null && chatRoom.getLatestMessage().getSendTime() != null)
                     ? chatRoom.getLatestMessage().getSendTime().toString()
-                    : "No timestamp";
+                    : "";
 
             return ChatRoomDto.builder()
                     .chatRoomId(chatRoom.getChatRoomId())
                     .masterId(chatRoom.getCreator().getUserId())
                     .participantId(chatRoom.getParticipant().getUserId())
                     .name(counterpartName)  // 상대방 이름으로 설정
-                    .lastMessages(chatRoom.getLatestMessage() != null ? chatRoom.getLatestMessage().getMessage() : "No messages yet")
+                    .lastMessages(chatRoom.getLatestMessage() != null ? chatRoom.getLatestMessage().getMessage() : "")
                     .lastMessagesTime(lastMessageTime)  // 마지막 메시지 시간을 설정
                     .build();
         }).collect(Collectors.toList());
@@ -108,7 +108,7 @@ public class ChatRoomService {
             // 로그인 유저가 participantId인 경우, 상대방 이름은 masterName
             return chatRoom.getCreator().getUserRealName();
         } else {
-            throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
+            throw new IllegalArgumentException("유효하지 않은 사용자 ID 입니다.");
         }
     }
 
