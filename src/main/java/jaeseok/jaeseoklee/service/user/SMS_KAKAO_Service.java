@@ -179,7 +179,7 @@ public class SMS_KAKAO_Service {
 
             // API 호출 및 응답 처리
             ResponseEntity<String> response = new RestTemplate().exchange(apiUrl, HttpMethod.POST, request, String.class);
-            return handleResponse(response);
+            return UserIdHandleResponse(response);
         } catch (Exception e) {
             log.error("Error occurred while sending Kakao message", e);
             return ResponseDto.setFailed("알 수 없는 오류가 발생했습니다.");
@@ -545,9 +545,19 @@ public class SMS_KAKAO_Service {
         return bytesToHex(saltBytes);
     }
 
-    private ResponseDto<?> handleResponse(ResponseEntity<String> response) {
+    private ResponseDto<?> UserIdHandleResponse(ResponseEntity<String> response) {
         if (response.getStatusCode() == HttpStatus.OK) {
             return ResponseDto.setSuccess("카카오톡(메세지) 확인 후 로그인을 계속해주세요.");
+        } else {
+            String errorMessage = response.getBody();
+            log.error("메시지 전송 실패: {}", errorMessage);
+            return ResponseDto.setFailed("메시지 전송에 실패했습니다: " + errorMessage);
+        }
+    }
+
+    private ResponseDto<?> handleResponse(ResponseEntity<String> response) {
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return ResponseDto.setSuccess("카카오톡(메세지)이 전송되었습니다.");
         } else {
             String errorMessage = response.getBody();
             log.error("메시지 전송 실패: {}", errorMessage);

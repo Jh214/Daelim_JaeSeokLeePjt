@@ -25,11 +25,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
        STOMP를 사용하면 웹소켓만 사용할 때와 다르게 하나의 연결주소마다 핸들러 클래스를 따로 구현할 필요없이
        Controller 방식으로 간편하게 사용할 수 있다.
      */
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws
         registry.addEndpoint("/ws") // 연결될 엔드포인트
-                .setAllowedOrigins("*")
+                .setAllowedOrigins("http://localhost:3000, https://jsl.comon.kr", "http://121.139.20.242:3000", "http://121.139.20.242:3001")
                 .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 
