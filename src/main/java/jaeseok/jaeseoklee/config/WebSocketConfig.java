@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws
         registry.addEndpoint("/ws") // 연결될 엔드포인트
-                .setAllowedOrigins("http://localhost:3000, https://jsl.comon.kr", "http://121.139.20.242:3000", "http://121.139.20.242:3001")
+                .setAllowedOrigins("http://localhost:3000", "https://jsl.comon.kr", "https://jsl2.comon.kr", "http://121.139.20.242:3000", "http://49.163.165.16:3000", "http://121.139.20.242:8859")
                 .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 

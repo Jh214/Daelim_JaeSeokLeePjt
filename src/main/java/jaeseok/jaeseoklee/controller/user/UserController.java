@@ -1,6 +1,5 @@
 package jaeseok.jaeseoklee.controller.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.*;
 import jaeseok.jaeseoklee.dto.user.*;
@@ -13,8 +12,6 @@ import jaeseok.jaeseoklee.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
