@@ -1,5 +1,6 @@
 package jaeseok.jaeseoklee.controller.websocket;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.websocket.ChatDto;
 import jaeseok.jaeseoklee.dto.websocket.RequestChat;
 import jaeseok.jaeseoklee.dto.websocket.ResponseChat;
@@ -23,6 +24,7 @@ public class ChatController {
     private final ChatService chatService;
 
     // /chat/send 엔드포인트로 들어오는 WebSocket 메시지를 처리한다.
+    @Tag(name = "실시간 채팅 ")
     @MessageMapping("/chat/send")
     public void sendMessage(@Payload ChatDto chat) {
         log.info("클라이언트로부터 메시지 수신: {}", chat);
@@ -33,6 +35,7 @@ public class ChatController {
         messagingTemplate.convertAndSend("/topic/" + chat.getChatRoomId(), chat);
     }
 
+    @Tag(name = "채팅 내역 불러오는 엔드포인트", description = "웹소켓의 순기능과는 거리가 있고 단순하게 채팅 내역만을 불러옴")
     @GetMapping("/chat/{chatRoomId}")
     public ResponseEntity<Page<ResponseChat>> getChats(@PathVariable(name = "chatRoomId") Long chatRoomId,
                                                        @ModelAttribute RequestChat requestChat) {

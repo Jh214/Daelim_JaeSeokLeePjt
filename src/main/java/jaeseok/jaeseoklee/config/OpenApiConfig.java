@@ -6,6 +6,8 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+
 //swagger 설정파일
 @Configuration
 public class OpenApiConfig {
@@ -17,9 +19,10 @@ public class OpenApiConfig {
                 .description("API Description");
 
         Server server = new Server();
-        server.setUrl("https://jsl.comon.kr");
+        server.setUrl("/");
 
         return new OpenAPI()
-                .info(info);
+                .info(info)
+                .servers(Collections.singletonList(server)); // 서버 URL 설정 추가
     }
 }

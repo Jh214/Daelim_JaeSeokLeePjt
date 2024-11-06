@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestChat {
-    private Long chatRoomId;
     private int page = 0;
     private int size = 30;
 }

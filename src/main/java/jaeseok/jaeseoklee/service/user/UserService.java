@@ -163,7 +163,6 @@ public class UserService {
         if (!authentication.getName().equals(userId)) {
             return ResponseDto.setFailed("권한이 없습니다.");
         }
-
 //        옵셔널로 찾은 userId 에 해당하는 User 정보로 UserEntity 생성
         User user = userOptional.get();
 
@@ -209,9 +208,12 @@ public class UserService {
         if (dto.getUserPw() != null && !dto.getUserPw().equals(dto.getUserConPw())) {
             return ResponseDto.setFailed("비밀번호가 일치하지 않습니다.");
         }
-
         // 비밀번호 해싱
         String hashedPassword = bCryptPasswordEncoder.encode(dto.getUserPw());
+
+        if (hashedPassword.equals(user.getUserPw())){
+            return ResponseDto.setFailed("현재 사용중인 비밀번호 입니다.");
+        }
 
         user.updatePassword(hashedPassword);
 
