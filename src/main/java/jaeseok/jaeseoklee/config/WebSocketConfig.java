@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws
         registry.addEndpoint("/ws") // 연결될 엔드포인트
-                .setAllowedOrigins("http://localhost:3000, https://jsl.comon.kr")
+                .setAllowedOrigins("*")
                 .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 
