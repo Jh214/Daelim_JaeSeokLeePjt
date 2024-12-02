@@ -7,10 +7,13 @@ import jaeseok.jaeseoklee.dto.user.sms.OrgSendSms;
 import jaeseok.jaeseoklee.dto.user.sms.ValidatePhoneNumAndSendKakao;
 import jaeseok.jaeseoklee.dto.user.sms.VerificationSmsCode;
 import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
+import jaeseok.jaeseoklee.service.user.SMS_KAKAO_ServiceImpl;
 import jaeseok.jaeseoklee.service.user.SocialUserService;
 import jaeseok.jaeseoklee.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    UserService userService;
-    @Autowired
-    SMS_KAKAO_Service smsKakaoService;
-    @Autowired
-    SocialUserService socialUserService;
+
+    private final UserService userService;
+    private final SocialUserService socialUserService;
+    private final SMS_KAKAO_Service smsKakaoService;
 
 //    회원가입
     @PostMapping("/signup")

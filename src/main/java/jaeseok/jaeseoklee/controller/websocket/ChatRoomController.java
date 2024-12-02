@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.websocket.RequestChatRoom;
 import jaeseok.jaeseoklee.service.websocket.ChatRoomService;
+import jaeseok.jaeseoklee.service.websocket.ChatRoomServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;

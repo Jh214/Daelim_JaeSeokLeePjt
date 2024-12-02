@@ -5,6 +5,7 @@ import jaeseok.jaeseoklee.dto.websocket.ChatDto;
 import jaeseok.jaeseoklee.dto.websocket.RequestChat;
 import jaeseok.jaeseoklee.dto.websocket.ResponseChat;
 import jaeseok.jaeseoklee.service.websocket.ChatService;
+import jaeseok.jaeseoklee.service.websocket.ChatServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

@@ -3,6 +3,7 @@ package jaeseok.jaeseoklee.controller.student;
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.student.StudentFilterDto;
 import jaeseok.jaeseoklee.service.student.StudentAttendanceService;
+import jaeseok.jaeseoklee.service.student.StudentAttendanceServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

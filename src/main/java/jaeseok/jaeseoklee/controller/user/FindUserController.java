@@ -3,17 +3,21 @@ package jaeseok.jaeseoklee.controller.user;
 import jaeseok.jaeseoklee.dto.ResponseDto;
 import jaeseok.jaeseoklee.dto.user.find.*;
 import jaeseok.jaeseoklee.service.user.FindUserService;
+import jaeseok.jaeseoklee.service.user.FindUserServiceImpl;
 import jaeseok.jaeseoklee.service.user.SMS_KAKAO_Service;
+import jaeseok.jaeseoklee.service.user.SMS_KAKAO_ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class FindUserController {
-    @Autowired
-    FindUserService findUserService;
-    @Autowired
-    SMS_KAKAO_Service smsKakaoService;
+
+    private final FindUserService findUserService;
+    private final SMS_KAKAO_Service smsKakaoService;
 
     //    인증메일 보내기
     @PostMapping("/sendEmail")
